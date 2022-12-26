@@ -5,7 +5,7 @@ import Calender from "./Calender";
 import BasicTable from "./Table";
 import { ContextProvider } from "../Context";
 import Categories from "../data/Categories";
-import { CREDIT } from "../data/constants";
+// import { CREDIT } from "../data/constants";
 
 const findTotal = (Transactions) => {
   Transactions.forEach((e, i) => {

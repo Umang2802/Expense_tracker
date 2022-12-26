@@ -6,8 +6,8 @@ import TableRow from "@mui/material/TableRow";
 import { styled } from "@mui/material/styles";
 import Bull from "./Bull";
 import colors from "../data/colors";
-import { ContextProvider } from "../Context";
-import { CREDIT } from "../data/constants";
+// import { ContextProvider } from "../Context";
+// import { CREDIT } from "../data/constants";
 
 const BasicTable = ({ date, categories, totalAmount }) => {
   const newCat = Object.keys(categories)

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CanvasJSReact from "../canvasjs.react";
 import colors from "../data/colors";
-import { CREDIT } from "../data/constants";
+// import { CREDIT } from "../data/constants";
 
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
@@ -30,7 +30,7 @@ const DoughnutChart = ({ date, categories, totalAmount }) => {
       .filter((e) => e !== "Income");
 
     setnewCat(cat);
-  }, []);
+  }, [setnewCat,categories]);
 
   const options = {
     colorSet: "newColors",
