@@ -1,8 +1,14 @@
-import Categories from "./data/Categories";
 import amountArray from "./data/Amounts";
 import Transactions from "./data/Transactions";
 import { createContext, useReducer } from "react";
-import { BALANCE, CREDIT, SPENDING, TRANSACTION } from "./data/constants";
+import {
+  ADD_ACCOUNT,
+  ADD_TRANSACTION,
+  BALANCE,
+  CREDIT,
+  SPENDING,
+  TRANSACTION,
+} from "./data/constants";
 
 export const ContextProvider = createContext();
 
@@ -59,15 +65,7 @@ const newCashFlowAfterTransaction = (
   }
 };
 
-const findTotal = () => {
-  Transactions.forEach((e, i) => {
-    Categories[`${e.category}`] += parseInt(e.amount);
-  });
-  return Categories;
-};
-
 const initialState = {
-  categories: findTotal(),
   cashFlow: newCashFlow(Transactions, amountArray),
   transactions: Transactions,
   accounts: [{ amount: "1200", tag: "Cash", color: "red" }],
@@ -76,7 +74,7 @@ const initialState = {
 const reducer = (state, action) => {
   const { type, payload } = action;
   switch (type) {
-    case "Add_Transaction":
+    case ADD_TRANSACTION:
       const newAccounts = state.accounts.map((item, i) => {
         if (payload.account === item.tag)
           return payload.cashFlow === CREDIT
@@ -91,9 +89,6 @@ const reducer = (state, action) => {
         return item;
       });
 
-      const newCategories = state.categories;
-      state.categories[`${payload.category}`] += parseInt(payload.amount);
-      console.log(payload.amount);
       return {
         ...state,
         cashFlow: newCashFlowAfterTransaction(
@@ -102,21 +97,20 @@ const reducer = (state, action) => {
           payload.amount,
           state.transactions.length + 1
         ),
-        categories: newCategories,
         transactions: [...state.transactions, payload],
         accounts: newAccounts,
       };
 
-    case "Add_Account":
+    case ADD_ACCOUNT:
       return {
         ...state,
         cashFlow: newCashFlowAfterTransaction(
           state.cashFlow,
           CREDIT,
-          action.payload.amount,
+          payload.amount,
           state.transactions.length
         ),
-        accounts: [...state.accounts, action.payload],
+        accounts: [...state.accounts, payload],
       };
 
     default:

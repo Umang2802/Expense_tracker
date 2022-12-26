@@ -7,6 +7,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Divider } from "@mui/material";
 import { ContextProvider } from "../Context";
+import { ADD_ACCOUNT } from "../data/constants";
 
 export default function FormDialog({ open, setOpen, accounts, setAccounts }) {
   const Context = useContext(ContextProvider);
@@ -20,21 +21,14 @@ export default function FormDialog({ open, setOpen, accounts, setAccounts }) {
 
   const accountHandler = () => {
     Context.dispatch({
-      type: "Add_Account",
+      type: ADD_ACCOUNT,
       payload: {
         amount: initialAmount,
         tag: accountName,
         color: colors[Math.ceil(Math.random() * 5)],
       },
     });
-    // setAccounts([
-    //   ...accounts,
-    //   {
-    //     amount: initialAmount,
-    //     tag: accountName,
-    //     color: colors[Math.ceil(Math.random() * 5)],
-    //   },
-    // ]);
+    
     setOpen(false);
     setInitialAmount("");
     setAccountName("");

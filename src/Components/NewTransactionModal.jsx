@@ -8,18 +8,12 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Box, Divider, InputLabel, MenuItem, Select } from "@mui/material";
 import dateFormat from "dateformat";
 import { ContextProvider } from "../Context";
+import { ADD_ACCOUNT, ADD_TRANSACTION } from "../data/constants";
+import Categories from "../data/Categories";
 
 export default function FormDialog({
   openTransactionModal,
   setOpenTransactionModal,
-  categories,
-  setCategories,
-  accounts,
-  setAccounts,
-  transaction,
-  setTransaction,
-  amounts,
-  setAmounts,
 }) {
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("");
@@ -35,7 +29,7 @@ export default function FormDialog({
 
   const newTransactionHandler = () => {
     Context.dispatch({
-      type: "Add_Transaction",
+      type: ADD_TRANSACTION,
       payload: {
         date: dateFormat(new Date(), "dd-mm-yyyy"),
         category,
@@ -45,17 +39,6 @@ export default function FormDialog({
         cashFlow,
       },
     });
-
-    const array = Context.state.accounts.map((item, i) => {
-      if (item.tag === account)
-        return {
-          amount: item.amount - amount,
-          tag: item.tag,
-          color: item.color,
-        };
-      else return item;
-    });
-    Context.dispatch({ type: "New_Account", payload: array });
 
     setOpenTransactionModal(false);
     setAccount("");
@@ -129,7 +112,7 @@ export default function FormDialog({
                 fullWidth
                 onChange={(e) => setCategory(e.target.value)}
               >
-                {Object.keys(Context.state.categories).map((item, index) => (
+                {Object.keys(Categories).map((item, index) => (
                   <MenuItem key={index} value={item}>
                     {item}
                   </MenuItem>

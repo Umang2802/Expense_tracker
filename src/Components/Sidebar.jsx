@@ -23,7 +23,7 @@ function Sidebar({
   const balance = cashFlow
     .filter((item, i) => i < 2)
     .reduce((diff, item) => diff.amount - item.amount);
-  console.log(balance);
+  // console.log(balance);
   const drawer = (
     <div>
       <Toolbar>
@@ -42,15 +42,13 @@ function Sidebar({
         <Button sx={{ mb: 5 }}>${balance}</Button>
         <Divider />
         <List>
-          {["Dashboard", "Login", "Expenses", "Transaction"].map(
-            (text, index) => (
-              <ListItem key={text} disablePadding>
-                <ListItemButton>
-                  <ListItemText primary={text} />
-                </ListItemButton>
-              </ListItem>
-            )
-          )}
+          {["Dashboard", "Login", "Transaction"].map((text, index) => (
+            <ListItem key={text} disablePadding>
+              <ListItemButton>
+                <ListItemText primary={text} />
+              </ListItemButton>
+            </ListItem>
+          ))}
         </List>
       </Box>
     </div>
