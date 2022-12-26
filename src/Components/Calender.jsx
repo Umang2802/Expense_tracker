@@ -26,7 +26,7 @@ export default function BasicDateRangePicker({ setDate }) {
         [value[1].$D, value[1].$M, value[1].$y].join("-"),
       ]);
     }
-  }, [value]);
+  }, [value,setDate]);
 
   return (
     <div style={{ paddingBottom: "20px", float: "right" }}>
