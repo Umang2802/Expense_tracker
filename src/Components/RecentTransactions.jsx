@@ -54,7 +54,7 @@ const RecentTransactions = ({ transaction }) => {
             <TableBody>
               {Context.state.transactions?.map(
                 (transaction, index) =>
-                  // index < 5 && (
+                  index < 5 && (
                     <StyledTableRow key={index}>
                       <StyledTableCell component="th" scope="row">
                         {transaction.date}
@@ -74,7 +74,7 @@ const RecentTransactions = ({ transaction }) => {
                         </StyledTableCell>
                       )}
                     </StyledTableRow>
-                  // )
+                  )
               )}
             </TableBody>
           </Table>

@@ -5,28 +5,23 @@ import Calender from "./Calender";
 import BasicTable from "./Table";
 import { ContextProvider } from "../Context";
 import Categories from "../data/Categories";
-// import { CREDIT } from "../data/constants";
 
 const findTotal = (Transactions) => {
+  let cat = { ...Categories };
   Transactions.forEach((e, i) => {
-    Categories[`${e.category}`] += parseInt(e.amount);
+    cat[`${e.category}`] += parseInt(e.amount);
   });
-  return Categories;
+  return cat;
 };
 
 const TotalExpense = () => {
   const [date, setDate] = React.useState([null, null]);
   const [totalAmount, settotalAmount] = useState(0);
   const { state } = useContext(ContextProvider);
-
   const [categories, setCategories] = useState({});
 
   useEffect(() => {
-    console.log("Second useeffect");
     let newCat = findTotal([...state.transactions]);
-    // state.transactions.forEach((e, i) => {
-    //   newCat[`${e.category}`] += parseInt(e.amount);
-    // });
 
     const newCatList = Object.keys(newCat)
       .filter((e) => newCat[`${e}`] !== 0)
@@ -36,9 +31,6 @@ const TotalExpense = () => {
       total += newCat[`${e}`];
       return total;
     }, 0);
-
-    // console.log("something" + totalAmt);
-    // console.log(newCat);
     settotalAmount(totalAmt);
     setCategories(newCat);
   }, [state.transactions]);
