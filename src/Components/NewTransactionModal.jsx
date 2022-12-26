@@ -8,7 +8,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Box, Divider, InputLabel, MenuItem, Select } from "@mui/material";
 import dateFormat from "dateformat";
 import { ContextProvider } from "../Context";
-import { ADD_ACCOUNT, ADD_TRANSACTION } from "../data/constants";
+import { ADD_TRANSACTION } from "../data/constants";
 import Categories from "../data/Categories";
 
 export default function FormDialog({
