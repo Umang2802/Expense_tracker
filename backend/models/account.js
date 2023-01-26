@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const accountSchema = new Schema(
   {
     name: { type: String, required: true },
-    initialAmount: { type: Number, required: true },
+    amount: { type: Number, required: true, min: 0 },
     user: {
       type: mongoose.SchemaTypes.ObjectId,
       ref: "User",

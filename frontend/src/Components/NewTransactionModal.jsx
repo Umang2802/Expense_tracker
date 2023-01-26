@@ -8,7 +8,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Box, Divider, MenuItem, Select, Typography } from "@mui/material";
 import dateFormat from "dateformat";
 import { ContextProvider } from "../Context";
-import { ADD_TRANSACTION, CREDIT, ERROR } from "../data/constants";
+import { ADD_TRANSACTION, INCOME, ERROR, EXPENSE } from "../data/constants";
 import Categories from "../data/Categories";
 // import { useForm } from "react-hook-form";
 import axios from "axios";
@@ -26,7 +26,7 @@ export default function FormDialog({
   // const onSubmit = (data) => console.log(data);
 
   const [amount, setAmount] = useState("");
-  const [category, setCategory] = useState(CREDIT);
+  const [category, setCategory] = useState(INCOME);
   const [description, setDescription] = useState("");
   const [account, setAccount] = useState("");
   const [cashFlow, setCashFlow] = useState("");
@@ -115,19 +115,19 @@ export default function FormDialog({
             onChange={(e) => setCashFlow(e.target.value)}
           >
             <MenuItem value="">None</MenuItem>
-            <MenuItem value={CREDIT}>Credit</MenuItem>
-            <MenuItem value="Expense">Spending</MenuItem>
+            <MenuItem value={INCOME}>{INCOME}</MenuItem>
+            <MenuItem value={EXPENSE}>{EXPENSE}</MenuItem>
           </Select>
           <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
             Category
           </Typography>
-          {cashFlow === CREDIT ? (
+          {cashFlow === INCOME ? (
             <TextField
               disabled
               sx={{ mb: 1 }}
               id="incomeCategory"
               fullWidth
-              value={CREDIT}
+              value={INCOME}
             />
           ) : (
             <Select

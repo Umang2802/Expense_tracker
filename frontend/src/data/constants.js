@@ -1,5 +1,5 @@
-const CREDIT = "Credit";
-const SPENDING = "Spending";
+const INCOME = "Income";
+const EXPENSE = "Expense";
 const BALANCE = "Balance";
 const TRANSACTION = "Transaction";
 const ADD_TRANSACTION = "Add_Transaction";
@@ -9,8 +9,8 @@ const LOGIN = "Login";
 const ERROR = "Error";
 
 export {
-  CREDIT,
-  SPENDING,
+  INCOME,
+  EXPENSE,
   BALANCE,
   TRANSACTION,
   ADD_TRANSACTION,

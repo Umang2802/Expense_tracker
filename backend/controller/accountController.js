@@ -1,14 +1,11 @@
 const Account = require("../models/account");
+const Transaction = require("../models/transaction");
 const User = require("../models/user");
+const checkUser = require("../utils/checkUser");
 
 const getAllAccountsByUser = async (req, res) => {
   try {
-    const checkUser = await User.findById(req.user_id);
-    if (!checkUser) {
-      res.status(404).json({ message: "User does not exist" });
-      return;
-    }
-    const accounts = await Account.find({ user: req.user_id }).select("-user");
+    const accounts = await Account.find({ user: req.user._id }).select("-user");
     res.status(200).json(accounts);
   } catch (error) {
     console.error(error.message);
@@ -18,25 +15,27 @@ const getAllAccountsByUser = async (req, res) => {
 
 const addAccount = async (req, res) => {
   try {
-    const checkUser = await User.findById(req.user_id);
-    if (!checkUser) {
-      res.status(404).json({ message: "User does not exist" });
-      return;
-    }
-
-    const { name } = req.body;
+    const { name, amount } = req.body;
+    const user_id = req.user._id;
 
     const checkAccount = await Account.findOne({
       name: name,
-      user: req.user_id,
+      user: user_id,
     });
     if (checkAccount) {
       res.status(400).json({ message: "Account already exists" });
       return;
     }
-    req.body.user = req.user_id;
+
+    req.body.user = user_id;
     const account = new Account(req.body);
-    const result = await account.save();
+    let result = await account.save();
+
+    delete result.user;
+    const user = await User.findById(user_id);
+    user.inflow += amount;
+    await User.findByIdAndUpdate(user_id, user);
+
     res.status(200).json(result);
   } catch (error) {
     console.error(error.message);
@@ -46,21 +45,21 @@ const addAccount = async (req, res) => {
 
 const updateAccount = async (req, res) => {
   try {
-    const checkUser = await User.findById(req.user_id);
-    if (!checkUser) {
-      res.status(404).json({ message: "User does not exist" });
-      return;
-    }
-
+    const { amount } = req.body;
     const checkAccount = await Account.findById(req.params.id);
     if (!checkAccount) {
-      res.status(400).json({ message: "Account not found" });
+      res.status(404).json({ message: "Account not found" });
       return;
     }
 
     const result = await Account.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
-    }).select("-user -createdAt -updatedAt -__v");
+    }).select("-user -createdAt -updatedAt -__v -_id");
+
+    let newInflow = req.user.inflow;
+    newInflow -= checkAccount.amount;
+    newInflow += Number(amount);
+    await User.findByIdAndUpdate(req.user._id, { inflow: newInflow });
     res.status(200).json(result);
   } catch (error) {
     console.error(error.message);
@@ -70,18 +69,24 @@ const updateAccount = async (req, res) => {
 
 const deleteAccount = async (req, res) => {
   try {
-    const checkUser = await User.findById(req.user_id);
-    if (!checkUser) {
-      res.status(404).json({ message: "User does not exist" });
-      return;
-    }
-
     const account_id = req.params.id;
     const checkAccount = await Account.findById(account_id);
     if (!checkAccount) {
       res.status(404).json({ message: "Account not found" });
       return;
     }
+    const transactions = await Transaction.find({ account: account_id });
+    let inflow = 0,
+      outflow = 0;
+    transactions.forEach((transaction) => {
+      if (transaction.cashFlow === "Income") {
+        inflow += transaction.amount;
+      } else if (transaction.cashFlow === "Expense") {
+        outflow += transaction.amount;
+      }
+    });
+    await User.findByIdAndUpdate(req.user._id, { inflow, outflow });
+    await Transaction.deleteMany({ account: account_id });
     await Account.findByIdAndDelete(account_id);
     res.status(200).send();
   } catch (error) {

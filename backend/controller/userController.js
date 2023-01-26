@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const checkUser = require("../utils/checkUser");
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -36,6 +37,8 @@ const register = async (req, res) => {
       return;
     }
 
+    delete req.body.inflow;
+    delete req.body.outflow;
     user = new User(req.body);
 
     const salt = await bcrypt.genSalt(10);
@@ -52,15 +55,12 @@ const register = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-    const user = await User.findById(req.user_id);
-    if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
-    }
     //to delete email from req.body
     delete req.body.email;
+    delete req.body.inflow;
+    delete req.body.outflow;
 
-    const updatedUser = await User.findByIdAndUpdate(user.id, req.body, {
+    const updatedUser = await User.findByIdAndUpdate(req.user._id, req.body, {
       new: true,
     }).select("-password -__v -_id");
     res.status(200).json(updatedUser);
@@ -72,12 +72,7 @@ const updateUser = async (req, res) => {
 
 const info = async (req, res) => {
   try {
-    const user = await User.findById(req.user_id).select("-password -__v -_id");
-    if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
-    }
-    res.status(200).json(user);
+    res.status(200).json(req.user);
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Server Error" });

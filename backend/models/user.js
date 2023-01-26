@@ -6,6 +6,8 @@ const userSchema = Schema({
   email: { type: String, required: true },
   password: { type: String, required: true },
   profileImage: { type: String },
+  inflow: { type: Number, default: 0 },
+  outflow: { type: Number, default: 0 },
 });
 
 const User = mongoose.model("User", userSchema);

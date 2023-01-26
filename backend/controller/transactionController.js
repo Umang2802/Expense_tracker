@@ -1,16 +1,12 @@
 const Account = require("../models/account");
 const Transaction = require("../models/transaction");
 const User = require("../models/user");
+const checkUser = require("../utils/checkUser");
 
 const getAllTransactionsByUser = async (req, res) => {
   try {
-    const checkUser = await User.findById(req.user_id);
-    if (!checkUser) {
-      res.status(404).json({ message: "User does not exist" });
-      return;
-    }
     const transactions = await Transaction.find({
-      user: req.user_id,
+      user: req.user._id,
     })
       .populate("account", "name")
       .select("-user");
@@ -23,15 +19,12 @@ const getAllTransactionsByUser = async (req, res) => {
 
 const addTransaction = async (req, res) => {
   try {
-    const { account } = req.body;
-    const checkUser = await User.findById(req.user_id);
-    if (!checkUser) {
-      res.status(404).json({ message: "User does not exist" });
-      return;
-    }
+    const { account, cashFlow, amount } = req.body;
+    const user = req.user;
+
     const checkAccount = await Account.findOne({
       name: account,
-      user: req.user_id,
+      user: user._id,
     });
     if (!checkAccount) {
       res.status(404).json({ message: "Account not found" });
@@ -39,10 +32,21 @@ const addTransaction = async (req, res) => {
     }
 
     req.body.account = checkAccount._id;
-    req.body.user = req.user_id;
+    req.body.user = user._id;
     const transaction = new Transaction(req.body);
     const result = await transaction.save();
     // .select("-user -createdAt -updatedAt -__v");
+
+    if (cashFlow === "Income") {
+      user.inflow += amount;
+      checkAccount.amount += amount;
+    } else if (cashFlow === "Expense") {
+      user.outflow += amount;
+      checkAccount.amount -= amount;
+    }
+    await Account.findByIdAndUpdate(checkAccount._id, checkAccount);
+    await User.findByIdAndUpdate(user._id, user);
+
     res.status(200).json(result);
   } catch (error) {
     console.error(error.message);
@@ -52,34 +56,49 @@ const addTransaction = async (req, res) => {
 
 const updateTransaction = async (req, res) => {
   try {
-    const checkUser = await User.findById(req.user_id);
-    if (!checkUser) {
-      res.status(404).json({ message: "User does not exist" });
-      return;
-    }
-
+    const user = req.user;
     const transaction_id = req.params.id;
-    const { account } = req.body;
+    const { account, amount } = req.body;
     const checkTransaction = await Transaction.findById(transaction_id);
     if (!checkTransaction) {
       res.status(404).json({ message: "Transaction not found" });
       return;
     }
-    const checkAccount = await Account.find({
+    const checkAccount = await Account.findOne({
       name: account,
-      user: req.user_id,
+      user: user._id,
     });
     if (!checkAccount) {
       res.status(404).json({ message: "Account not found" });
       return;
     }
-    req.body.account = checkAccount._id;
 
+    if (checkTransaction.cashFlow === "Income") {
+      user.inflow -= checkTransaction.amount;
+      checkAccount.amount -= checkTransaction.amount;
+    } else if (checkTransaction.cashFlow === "Expense") {
+      user.outflow -= checkTransaction.amount;
+      checkAccount.amount += checkTransaction.amount;
+    }
+
+    req.body.account = checkAccount._id;
     const result = await Transaction.findByIdAndUpdate(
       transaction_id,
       req.body,
       { new: true }
     ).select("-user -createdAt -updatedAt -__v");
+
+    if (result.cashFlow === "Income") {
+      user.inflow += amount;
+      checkAccount.amount += amount;
+    } else if (result.cashFlow === "Expense") {
+      user.outflow += amount;
+      checkAccount.amount -= amount;
+    }
+    console.log(checkAccount);
+    await Account.findByIdAndUpdate(checkAccount._id, checkAccount);
+    await User.findByIdAndUpdate(user._id, user);
+
     res.status(200).json(result);
   } catch (error) {
     console.error(error.message);
@@ -89,18 +108,30 @@ const updateTransaction = async (req, res) => {
 
 const deleteTransaction = async (req, res) => {
   try {
-    const checkUser = await User.findById(req.user_id);
-    if (!checkUser) {
-      res.status(404).json({ message: "User does not exist" });
-      return;
-    }
-
+    const user = req.user;
     const transaction_id = req.params.id;
     const checkTransaction = await Transaction.findById(transaction_id);
     if (!checkTransaction) {
       res.status(404).json({ message: "Transaction not found" });
       return;
     }
+
+    const checkAccount = await Account.findById(checkTransaction.account);
+    if (!checkAccount) {
+      res.status(404).json({ message: "Account not found" });
+      return;
+    }
+
+    if (checkTransaction.cashFlow === "Income") {
+      user.inflow -= checkTransaction.amount;
+      checkAccount.amount -= checkTransaction.amount;
+    } else if (checkTransaction.cashFlow === "Expense") {
+      user.outflow -= checkTransaction.amount;
+      checkAccount.amount += checkTransaction.amount;
+    }
+
+    await User.findByIdAndUpdate(user._id, user);
+    await Account.findByIdAndUpdate(checkAccount._id, checkAccount);
     await Transaction.findByIdAndDelete(transaction_id);
     res.status(200).send();
   } catch (error) {
