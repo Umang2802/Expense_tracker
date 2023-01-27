@@ -11,7 +11,7 @@ const accountSchema = new Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  { versionKey: false }
 );
 
 const Account = mongoose.model("Account", accountSchema);

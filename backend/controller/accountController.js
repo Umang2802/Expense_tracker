@@ -29,14 +29,14 @@ const addAccount = async (req, res) => {
 
     req.body.user = user_id;
     const account = new Account(req.body);
-    let result = await account.save();
+    await account.save();
 
-    delete result.user;
     const user = await User.findById(user_id);
     user.inflow += amount;
     await User.findByIdAndUpdate(user_id, user);
+    const newAccount = await Account.findById(account._id).select("-user -_id");
 
-    res.status(200).json(result);
+    res.status(200).json(newAccount);
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Server Error" });
@@ -54,7 +54,7 @@ const updateAccount = async (req, res) => {
 
     const result = await Account.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
-    }).select("-user -createdAt -updatedAt -__v -_id");
+    }).select("-user -_id");
 
     let newInflow = req.user.inflow;
     newInflow -= checkAccount.amount;

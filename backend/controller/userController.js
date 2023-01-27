@@ -1,7 +1,6 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const checkUser = require("../utils/checkUser");
+const createJwtToken = require("../utils/createJwtToken");
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -62,7 +61,7 @@ const updateUser = async (req, res) => {
 
     const updatedUser = await User.findByIdAndUpdate(req.user._id, req.body, {
       new: true,
-    }).select("-password -__v -_id");
+    }).select("-password -_id");
     res.status(200).json(updatedUser);
   } catch (error) {
     console.error(error.message);
@@ -77,24 +76,6 @@ const info = async (req, res) => {
     console.error(error.message);
     res.status(500).json({ message: "Server Error" });
   }
-};
-
-const createJwtToken = (user) => {
-  return new Promise((resolve, reject) => {
-    const payload = {
-      user_id: user.id,
-    };
-
-    jwt.sign(
-      payload,
-      process.env.JWT_SECRET,
-      { expiresIn: "15m" },
-      (error, token) => {
-        if (error) reject(error);
-        else resolve(token);
-      }
-    );
-  });
 };
 
 module.exports = { login, register, info, updateUser };

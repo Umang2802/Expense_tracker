@@ -18,7 +18,8 @@ const transactionSchema = new Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
+  { versionKey: false }
 );
 
 const Transaction = mongoose.model("Transaction", transactionSchema);

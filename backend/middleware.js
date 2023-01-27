@@ -17,9 +17,7 @@ module.exports = (req, res, next) => {
         return res.status(401).json({ message: "Token is not valid" });
       } else {
         //send user in req
-        const user = await User.findById(payload.user_id).select(
-          "-password -__v"
-        );
+        const user = await User.findById(payload.user_id).select("-password");
         if (!user) {
           return res.status(401).json({ message: "Authorization denied" });
         }

@@ -23,7 +23,7 @@ const addTransaction = async (req, res) => {
     const user = req.user;
 
     const checkAccount = await Account.findOne({
-      name: account,
+      _id: account,
       user: user._id,
     });
     if (!checkAccount) {
@@ -34,8 +34,7 @@ const addTransaction = async (req, res) => {
     req.body.account = checkAccount._id;
     req.body.user = user._id;
     const transaction = new Transaction(req.body);
-    const result = await transaction.save();
-    // .select("-user -createdAt -updatedAt -__v");
+    await transaction.save();
 
     if (cashFlow === "Income") {
       user.inflow += amount;
@@ -47,7 +46,11 @@ const addTransaction = async (req, res) => {
     await Account.findByIdAndUpdate(checkAccount._id, checkAccount);
     await User.findByIdAndUpdate(user._id, user);
 
-    res.status(200).json(result);
+    const newTransaction = await Transaction.findById(transaction._id).select(
+      "-user -createdAt -updatedAt"
+    );
+
+    res.status(200).json(newTransaction);
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Server Error" });
@@ -64,8 +67,18 @@ const updateTransaction = async (req, res) => {
       res.status(404).json({ message: "Transaction not found" });
       return;
     }
+
+    const checkOldAccount = await Account.findOne({
+      _id: checkTransaction.account,
+      user: user._id,
+    });
+    if (!checkOldAccount) {
+      res.status(404).json({ message: "Old Account not found" });
+      return;
+    }
+
     const checkAccount = await Account.findOne({
-      name: account,
+      _id: account,
       user: user._id,
     });
     if (!checkAccount) {
@@ -75,10 +88,10 @@ const updateTransaction = async (req, res) => {
 
     if (checkTransaction.cashFlow === "Income") {
       user.inflow -= checkTransaction.amount;
-      checkAccount.amount -= checkTransaction.amount;
+      checkOldAccount.amount -= checkTransaction.amount;
     } else if (checkTransaction.cashFlow === "Expense") {
       user.outflow -= checkTransaction.amount;
-      checkAccount.amount += checkTransaction.amount;
+      checkOldAccount.amount += checkTransaction.amount;
     }
 
     req.body.account = checkAccount._id;
@@ -86,7 +99,7 @@ const updateTransaction = async (req, res) => {
       transaction_id,
       req.body,
       { new: true }
-    ).select("-user -createdAt -updatedAt -__v");
+    ).select("-user -createdAt -updatedAt");
 
     if (result.cashFlow === "Income") {
       user.inflow += amount;
@@ -95,7 +108,8 @@ const updateTransaction = async (req, res) => {
       user.outflow += amount;
       checkAccount.amount -= amount;
     }
-    console.log(checkAccount);
+
+    await Account.findByIdAndUpdate(checkOldAccount._id, checkOldAccount);
     await Account.findByIdAndUpdate(checkAccount._id, checkAccount);
     await User.findByIdAndUpdate(user._id, user);
 
