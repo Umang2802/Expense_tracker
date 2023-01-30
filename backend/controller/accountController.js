@@ -40,7 +40,7 @@ const addAccount = async (req, res) => {
       await account.save({ session });
 
       user.inflow += amount;
-      await User.findByIdAndUpdate(user_id, user).session(session);
+      await User.findByIdAndUpdate(user._id, user).session(session);
       const newAccount = await Account.findById(account._id)
         .session(session)
         .select("-user -_id");

@@ -116,6 +116,12 @@ const updateTransaction = async (req, res) => {
         .session(session)
         .select("-user -createdAt -updatedAt");
 
+      if (checkTransaction.cashFlow === "Income") {
+        user.inflow -= checkTransaction.amount;
+      } else if (checkTransaction.cashFlow === "Expense") {
+        user.outflow -= checkTransaction.amount;
+      }
+
       //if Old account is not same as new account
       if (account !== checkTransaction.account) {
         let checkOldAccount = await Account.findOne({
@@ -127,10 +133,8 @@ const updateTransaction = async (req, res) => {
           return;
         }
         if (checkTransaction.cashFlow === "Income") {
-          user.inflow -= checkTransaction.amount;
           checkOldAccount.amount -= checkTransaction.amount;
         } else if (checkTransaction.cashFlow === "Expense") {
-          user.outflow -= checkTransaction.amount;
           checkOldAccount.amount += checkTransaction.amount;
         }
         await Account.findByIdAndUpdate(
@@ -140,10 +144,8 @@ const updateTransaction = async (req, res) => {
       }
 
       if (checkTransaction.cashFlow === "Income") {
-        user.inflow -= checkTransaction.amount;
         checkAccount.amount -= checkTransaction.amount;
       } else if (checkTransaction.cashFlow === "Expense") {
-        user.outflow -= checkTransaction.amount;
         checkAccount.amount += checkTransaction.amount;
       }
 
