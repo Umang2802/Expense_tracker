@@ -54,7 +54,7 @@ const register = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-    //to delete email from req.body
+    //to delete email,inflow,outflow from req.body
     delete req.body.email;
     delete req.body.inflow;
     delete req.body.outflow;

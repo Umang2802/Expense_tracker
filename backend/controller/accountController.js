@@ -17,8 +17,8 @@ const addAccount = async (req, res) => {
   try {
     const session = await mongoose.startSession();
     await session.withTransaction(async () => {
-      const { name, amount } = req.body;
-      const user_id = req.user._id;
+      let { name, amount } = req.body;
+      let user = req.user;
       amount = Number(amount);
 
       if (amount < 0) {
@@ -26,29 +26,24 @@ const addAccount = async (req, res) => {
         return;
       }
 
-      const checkAccount = await Account.findOne(
-        {
-          name: name,
-          user: user_id,
-        },
-        null,
-        { session }
-      );
+      const checkAccount = await Account.findOne({
+        name: name,
+        user: user._id,
+      }).session(session);
       if (checkAccount) {
         res.status(400).json({ message: "Account already exists" });
         return;
       }
 
-      req.body.user = user_id;
+      req.body.user = user._id;
       const account = new Account(req.body);
       await account.save({ session });
 
-      const user = await User.findById(user_id, null, { session });
       user.inflow += amount;
-      await User.findByIdAndUpdate(user_id, user, { session });
-      const newAccount = await Account.findById(account._id, null, {
-        session,
-      }).select("-user -_id");
+      await User.findByIdAndUpdate(user_id, user).session(session);
+      const newAccount = await Account.findById(account._id)
+        .session(session)
+        .select("-user -_id");
 
       res.status(200).json(newAccount);
     });
@@ -63,37 +58,32 @@ const updateAccount = async (req, res) => {
   try {
     const session = await mongoose.startSession();
     await session.withTransaction(async () => {
-      const { amount } = req.body;
-      amount = Number(amount)
+      let { amount } = req.body;
+      const account_id = req.params.id;
+      amount = Number(amount);
 
       if (amount < 0) {
         res.status(400).json({ message: "Amount can't be negative" });
         return;
       }
-      const checkAccount = await Account.findById(req.params.id, null, {
-        session,
-      });
+      const checkAccount = await Account.findById(account_id).session(session);
       if (!checkAccount) {
         res.status(404).json({ message: "Account not found" });
         return;
       }
 
-      const result = await Account.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        {
-          new: true,
-        },
-        null,
-        { session }
-      ).select("-user -_id");
+      const result = await Account.findByIdAndUpdate(account_id, req.body, {
+        new: true,
+      })
+        .session(session)
+        .select("-user -_id");
 
       let newInflow = req.user.inflow;
       newInflow -= checkAccount.amount;
       newInflow += amount;
-      await User.findByIdAndUpdate(req.user._id, { inflow: newInflow }, null, {
-        session,
-      });
+      await User.findByIdAndUpdate(req.user._id, { inflow: newInflow }).session(
+        session
+      );
       res.status(200).json(result);
     });
     session.endSession();
@@ -108,38 +98,28 @@ const deleteAccount = async (req, res) => {
     const session = await mongoose.startSession();
     await session.withTransaction(async () => {
       const account_id = req.params.id;
-      const checkAccount = await Account.findById(account_id, null, {
-        session,
-      });
+      let user = req.user;
+
+      const checkAccount = await Account.findById(account_id).session(session);
       if (!checkAccount) {
         res.status(404).json({ message: "Account not found" });
         return;
       }
-      const transactions = await Transaction.find(
-        { account: account_id },
-        null,
-        {
-          session,
-        }
-      );
-      let inflow = 0,
-        outflow = 0;
+      const transactions = await Transaction.find({
+        account: account_id,
+      }).session(session);
+
+      user.inflow -= checkAccount.amount;
       transactions.forEach((transaction) => {
         if (transaction.cashFlow === "Income") {
-          inflow += transaction.amount;
+          user.inflow -= transaction.amount;
         } else if (transaction.cashFlow === "Expense") {
-          outflow += transaction.amount;
+          user.outflow -= transaction.amount;
         }
       });
-      await User.findByIdAndUpdate(req.user._id, { inflow, outflow }, null, {
-        session,
-      });
-      await Transaction.deleteMany({ account: account_id }, null, {
-        session,
-      });
-      await Account.findByIdAndDelete(account_id, null, {
-        session,
-      });
+      await User.findByIdAndUpdate(user._id, user).session(session);
+      await Transaction.deleteMany({ account: account_id }).session(session);
+      await Account.findByIdAndDelete(account_id).session(session);
       res.status(200).send();
     });
     session.endSession();
