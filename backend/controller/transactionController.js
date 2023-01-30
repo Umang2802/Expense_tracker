@@ -37,6 +37,7 @@ const addTransaction = async (req, res) => {
       }).session(session);
       if (!checkAccount) {
         res.status(404).json({ message: "Account not found" });
+        return;
       }
 
       req.body.account = checkAccount._id;
