@@ -90,9 +90,10 @@ const updateTransaction = async (req, res) => {
         res.status(400).json({ message: "Amount can't be negative" });
         return;
       }
-      const checkTransaction = await Transaction.findById(
-        transaction_id
-      ).session(session);
+      const checkTransaction = await Transaction.findOne({
+        _id: transaction_id,
+        user: user._id,
+      }).session(session);
       if (!checkTransaction) {
         res.status(404).json({ message: "Transaction not found" });
         return;
@@ -184,17 +185,19 @@ const deleteTransaction = async (req, res) => {
     await session.withTransaction(async () => {
       let user = req.user;
       const transaction_id = req.params.id;
-      const checkTransaction = await Transaction.findById(
-        transaction_id
-      ).session(session);
+      const checkTransaction = await Transaction.findOne({
+        _id: transaction_id,
+        user: user._id,
+      }).session(session);
       if (!checkTransaction) {
         res.status(404).json({ message: "Transaction not found" });
         return;
       }
 
-      let checkAccount = await Account.findById(
-        checkTransaction.account
-      ).session(session);
+      let checkAccount = await Account.findOne({
+        _id: checkTransaction.account,
+        user: user._id,
+      }).session(session);
       if (!checkAccount) {
         res.status(404).json({ message: "Account not found" });
         return;

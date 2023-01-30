@@ -59,6 +59,7 @@ const updateAccount = async (req, res) => {
     const session = await mongoose.startSession();
     await session.withTransaction(async () => {
       let { amount } = req.body;
+      let user = req.user;
       const account_id = req.params.id;
       amount = Number(amount);
 
@@ -66,7 +67,10 @@ const updateAccount = async (req, res) => {
         res.status(400).json({ message: "Amount can't be negative" });
         return;
       }
-      const checkAccount = await Account.findById(account_id).session(session);
+      const checkAccount = await Account.findOne({
+        _id: account_id,
+        user: user._id,
+      }).session(session);
       if (!checkAccount) {
         res.status(404).json({ message: "Account not found" });
         return;
@@ -78,10 +82,10 @@ const updateAccount = async (req, res) => {
         .session(session)
         .select("-user -_id");
 
-      let newInflow = req.user.inflow;
+      let newInflow = user.inflow;
       newInflow -= checkAccount.amount;
       newInflow += amount;
-      await User.findByIdAndUpdate(req.user._id, { inflow: newInflow }).session(
+      await User.findByIdAndUpdate(user._id, { inflow: newInflow }).session(
         session
       );
       res.status(200).json(result);
