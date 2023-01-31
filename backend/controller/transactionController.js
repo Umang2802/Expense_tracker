@@ -91,11 +91,11 @@ const updateTransaction = async (req, res) => {
         res.status(400).json({ message: "Amount can't be negative" });
         return;
       }
-      const checkTransaction = await Transaction.findOne({
+      const oldTransaction = await Transaction.findOne({
         _id: transaction_id,
         user: user._id,
       }).session(session);
-      if (!checkTransaction) {
+      if (!oldTransaction) {
         res.status(404).json({ message: "Transaction not found" });
         return;
       }
@@ -109,8 +109,8 @@ const updateTransaction = async (req, res) => {
         return;
       }
 
-      req.body.account = account._id;
-      const result = await Transaction.findByIdAndUpdate(
+      req.body.account = checkAccount._id;
+      const newTransaction = await Transaction.findByIdAndUpdate(
         transaction_id,
         req.body,
         { new: true }
@@ -118,51 +118,51 @@ const updateTransaction = async (req, res) => {
         .session(session)
         .select("-user -createdAt -updatedAt");
 
-      if (checkTransaction.cashFlow === "Income") {
-        user.inflow -= checkTransaction.amount;
-      } else if (checkTransaction.cashFlow === "Expense") {
-        user.outflow -= checkTransaction.amount;
+      if (oldTransaction.cashFlow === "Income") {
+        user.inflow -= oldTransaction.amount;
+      } else if (oldTransaction.cashFlow === "Expense") {
+        user.outflow -= oldTransaction.amount;
       }
-
       //if Old account is not same as new account
-      if (account !== checkTransaction.account) {
+      if (!newTransaction.account.equals(oldTransaction.account)) {
         let checkOldAccount = await Account.findOne({
-          _id: checkTransaction.account,
+          _id: oldTransaction.account,
           user: user._id,
         }).session(session);
         if (!checkOldAccount) {
           res.status(404).json({ message: "Old Account not found" });
           return;
         }
-        if (checkTransaction.cashFlow === "Income") {
-          checkOldAccount.amount -= checkTransaction.amount;
-        } else if (checkTransaction.cashFlow === "Expense") {
-          checkOldAccount.amount += checkTransaction.amount;
+        if (oldTransaction.cashFlow === "Income") {
+          checkOldAccount.amount -= oldTransaction.amount;
+        } else if (oldTransaction.cashFlow === "Expense") {
+          checkOldAccount.amount += oldTransaction.amount;
         }
         await Account.findByIdAndUpdate(
           checkOldAccount._id,
           checkOldAccount
         ).session(session);
+      } else {
+        if (oldTransaction.cashFlow === "Income") {
+          checkAccount.amount -= oldTransaction.amount;
+        } else if (oldTransaction.cashFlow === "Expense") {
+          checkAccount.amount += oldTransaction.amount;
+        }
       }
 
-      if (checkTransaction.cashFlow === "Income") {
-        checkAccount.amount -= checkTransaction.amount;
-      } else if (checkTransaction.cashFlow === "Expense") {
-        checkAccount.amount += checkTransaction.amount;
-      }
-
-      if (result.cashFlow === "Income") {
-        user.inflow += amount;
-        checkAccount.amount += amount;
-      } else if (result.cashFlow === "Expense") {
-        user.outflow += amount;
-        const diff = checkAccount.amount - amount;
+      //updating inflow, outflow and new account according to new transaction amount
+      if (newTransaction.cashFlow === "Income") {
+        user.inflow += newTransaction.amount;
+        checkAccount.amount += newTransaction.amount;
+      } else if (newTransaction.cashFlow === "Expense") {
+        user.outflow += newTransaction.amount;
+        const diff = checkAccount.amount - newTransaction.amount;
         if (diff < 0) {
           res.status(400).json({ message: "Not enough balance in account" });
           await session.abortTransaction();
           return;
         }
-        checkAccount.amount -= amount;
+        checkAccount.amount -= newTransaction.amount;
       }
 
       await Account.findByIdAndUpdate(checkAccount._id, checkAccount).session(
@@ -171,7 +171,7 @@ const updateTransaction = async (req, res) => {
 
       await User.findByIdAndUpdate(user._id, user).session(session);
 
-      res.status(200).json(result);
+      res.status(200).json(newTransaction);
     });
     session.endSession();
   } catch (error) {

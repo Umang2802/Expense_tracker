@@ -113,14 +113,18 @@ const deleteAccount = async (req, res) => {
         account: account_id,
       }).session(session);
 
-      user.inflow -= checkAccount.amount;
+      let totalTransactionInflow = 0;
       transactions.forEach((transaction) => {
         if (transaction.cashFlow === "Income") {
+          totalTransactionInflow += transaction.amount;
           user.inflow -= transaction.amount;
         } else if (transaction.cashFlow === "Expense") {
           user.outflow -= transaction.amount;
+          totalTransactionInflow -= transaction.amount;
         }
       });
+      user.inflow -= Math.abs(checkAccount.amount - totalTransactionInflow);
+
       await User.findByIdAndUpdate(user._id, user).session(session);
       await Transaction.deleteMany({ account: account_id }).session(session);
       await Account.findByIdAndDelete(account_id).session(session);
