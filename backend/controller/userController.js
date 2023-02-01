@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const createJwtToken = require("../utils/createJwtToken");
+const { cloudinary } = require("../config/cloudinary");
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -27,13 +28,27 @@ const login = async (req, res) => {
 };
 
 const register = async (req, res) => {
-  const { email, password } = req.body;
-
   try {
+    const { email, password } = req.body;
+
     user = await User.findOne({ email });
     if (user) {
       res.status(400).json({ message: "Email already exists" });
       return;
+    }
+    if (req.body.profileImage) {
+      //cloudinary
+      cloudinary.uploader
+        .upload(
+          req.body.profileImage
+          // { upload_preset: "Expense_tracker_users" }
+          // (error, result) => {
+          //   console.log("error" + error);
+          //   req.body.profileImage = result;
+          // }
+        )
+        .then((res) => console.log("success"))
+        .catch((err) => console.log(err));
     }
 
     delete req.body.inflow;

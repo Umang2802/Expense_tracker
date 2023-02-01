@@ -13,8 +13,13 @@ connection();
 
 app.use(cors());
 var bodyParser = require("body-parser");
-app.use(bodyParser.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(
+  bodyParser.urlencoded({
+    limit: "50mb",
+    extended: true,
+  })
+);
 
 app.listen(process.env.PORT);
 
