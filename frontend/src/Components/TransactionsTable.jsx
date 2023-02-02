@@ -9,7 +9,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { ContextProvider } from "../Context";
-import { CREDIT } from "../data/constants";
+import { INCOME } from "../data/constants";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -31,7 +31,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const TransactionsTable = ({noOfTransactions,title}) => {
+const TransactionsTable = ({ noOfTransactions, title }) => {
   const Context = React.useContext(ContextProvider);
 
   return (
@@ -65,7 +65,7 @@ const TransactionsTable = ({noOfTransactions,title}) => {
                       <StyledTableCell>
                         {transaction.description}
                       </StyledTableCell>
-                      {transaction.cashFlow === CREDIT ? (
+                      {transaction.cashFlow === INCOME ? (
                         <StyledTableCell align="right" sx={{ color: "green" }}>
                           + ${transaction.amount}
                         </StyledTableCell>

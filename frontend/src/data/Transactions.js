@@ -1,4 +1,4 @@
-import { CREDIT, SPENDING } from "./constants";
+import { INCOME, EXPENSE } from "./constants";
 
 const transactions = [
   {
@@ -7,7 +7,7 @@ const transactions = [
     account: "Cash",
     description: "Groceries",
     amount: "100",
-    cashFlow: SPENDING,
+    cashFlow: EXPENSE,
   },
   {
     date: "2022-11-15",
@@ -15,7 +15,7 @@ const transactions = [
     account: "HDFC",
     description: "Clothes Shopping MAX",
     amount: "100",
-    cashFlow: SPENDING,
+    cashFlow: EXPENSE,
   },
   {
     date: "2022-11-19",
@@ -23,7 +23,7 @@ const transactions = [
     account: "BOI",
     description: "Ritz Panjim",
     amount: "100",
-    cashFlow: SPENDING,
+    cashFlow: EXPENSE,
   },
   {
     date: "2022-11-1",
@@ -31,7 +31,7 @@ const transactions = [
     account: "HDFC",
     description: "Mobile Recharge",
     amount: "100",
-    cashFlow: SPENDING,
+    cashFlow: EXPENSE,
   },
   {
     date: "2022-11-3",
@@ -39,7 +39,7 @@ const transactions = [
     account: "SBI",
     description: "Monitor",
     amount: "150",
-    cashFlow: SPENDING,
+    cashFlow: EXPENSE,
   },
   {
     date: "2022-11-6",
@@ -47,15 +47,15 @@ const transactions = [
     account: "HDFC",
     description: "Shopping",
     amount: "120",
-    cashFlow: SPENDING,
+    cashFlow: EXPENSE,
   },
   {
     date: "2022-11-8",
-    category: CREDIT,
+    category: INCOME,
     account: "HDFC",
     description: "Income",
     amount: "1200",
-    cashFlow: CREDIT,
+    cashFlow: INCOME,
   },
 ];
 

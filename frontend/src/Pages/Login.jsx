@@ -8,10 +8,12 @@ import {
   Typography,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
-import React, { useContext } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import { LOGIN } from "../data/constants";
-import { ContextProvider } from "../Context";
+import { useDispatch } from "react-redux";
+import { apiCall } from "../redux/createAsyncThunk";
+import { LOGIN_URL } from "../services/endpoints";
+import { login } from "../redux/slices/userSlice";
 
 const Login = () => {
   const {
@@ -20,16 +22,17 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
-  const Context = useContext(ContextProvider);
+  const dispatch = useDispatch();
 
   const onSubmit = (data) => {
-    Context.dispatch({
-      type: LOGIN,
-      payload: {
-        email: data.emailId,
-        password: data.password,
-      },
-    });
+    dispatch(
+      apiCall({
+        payload: data,
+        url: LOGIN_URL,
+        method: "POST",
+        name: login,
+      })
+    );
   };
 
   return (
@@ -61,12 +64,12 @@ const Login = () => {
           </Typography>
           <TextField
             sx={{ mb: 2 }}
-            id="emailId"
+            id="email"
             fullWidth
             placeholder="Enter Email Id"
-            {...register("emailId", { required: true })}
-            error={Boolean(errors.emailId)}
-            helperText={errors.emailId ? "Email Id is required" : ""}
+            {...register("email", { required: true })}
+            error={Boolean(errors.email)}
+            helperText={errors.email ? "Email Id is required" : ""}
           />
           <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
             Password

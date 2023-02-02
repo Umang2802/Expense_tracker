@@ -6,12 +6,12 @@ import TableRow from "@mui/material/TableRow";
 import { styled } from "@mui/material/styles";
 import Bull from "./Bull";
 import colors from "../data/colors";
-import { CREDIT } from "../data/constants";
+import { INCOME } from "../data/constants";
 
 const BasicTable = ({ date, categories, totalAmount }) => {
   const newCat = Object.keys(categories)
     .filter((e) => categories[`${e}`] !== 0)
-    .filter((e) => e !== CREDIT);
+    .filter((e) => e !== INCOME);
 
   const TableCells = styled(TableCell)(() => ({
     padding: 2,

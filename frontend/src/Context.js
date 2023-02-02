@@ -5,11 +5,11 @@ import {
   ADD_ACCOUNT,
   ADD_TRANSACTION,
   BALANCE,
-  CREDIT,
+  INCOME,
   ERROR,
   LOGIN,
   REGISTER,
-  SPENDING,
+  EXPENSE,
   TRANSACTION,
 } from "./data/constants";
 
@@ -17,13 +17,13 @@ export const ContextProvider = createContext();
 
 const Credit = (args) =>
   args.reduce((totalamount = 0, item) => {
-    if (item.cashFlow === CREDIT) return totalamount + parseInt(item.amount);
+    if (item.cashFlow === INCOME) return totalamount + parseInt(item.amount);
     else return totalamount;
   }, 0);
 
 const Spending = (args) =>
   args.reduce((totalamount = 0, item) => {
-    if (item.cashFlow === SPENDING) return totalamount + parseInt(item.amount);
+    if (item.cashFlow === EXPENSE) return totalamount + parseInt(item.amount);
     else return totalamount;
   }, 0);
 
@@ -31,8 +31,8 @@ const newCashFlow = (transactions, cashFlows) => {
   const credit = Credit(transactions);
   const spending = Spending(transactions);
   return cashFlows.map((item, i) => {
-    if (item.tag === CREDIT) return { ...item, amount: credit };
-    else if (item.tag === SPENDING) return { ...item, amount: spending };
+    if (item.tag === INCOME) return { ...item, amount: credit };
+    else if (item.tag === EXPENSE) return { ...item, amount: spending };
     else if (item.tag === BALANCE)
       return { ...item, amount: credit - spending };
     else return { ...item, amount: transactions.length };
@@ -45,9 +45,9 @@ const newCashFlowAfterTransaction = (
   newAmount,
   noOfTransactions
 ) => {
-  if (tag === CREDIT) {
+  if (tag === INCOME) {
     return cashFlow.map((item, i) => {
-      if (item.tag === CREDIT)
+      if (item.tag === INCOME)
         return { ...item, amount: parseInt(item.amount) + parseInt(newAmount) };
       else if (item.tag === BALANCE)
         return { ...item, amount: parseInt(item.amount) + parseInt(newAmount) };
@@ -57,7 +57,7 @@ const newCashFlowAfterTransaction = (
     });
   } else {
     return cashFlow.map((item, i) => {
-      if (item.tag === SPENDING)
+      if (item.tag === EXPENSE)
         return { ...item, amount: parseInt(item.amount) + parseInt(newAmount) };
       else if (item.tag === BALANCE)
         return { ...item, amount: parseInt(item.amount) - parseInt(newAmount) };
@@ -69,6 +69,20 @@ const newCashFlowAfterTransaction = (
 };
 
 const initialState = {
+  user: {
+    token: "",
+    username: "",
+    email: "",
+    profileImage: "",
+    inflow: null,
+    outflow: null,
+    loggedIn: false,
+  },
+  transactions: [],
+  accounts: [],
+};
+
+const InitialState = {
   errorMessage: "",
   loggedIn: false,
   cashFlow: newCashFlow(Transactions, amountArray),
@@ -79,10 +93,26 @@ const initialState = {
 const reducer = (state, action) => {
   const { type, payload } = action;
   switch (type) {
+    case LOGIN:
+    case REGISTER:
+    // case UPDATE_USER:
+    // case GET_USER:
+    // case GET_HOME:
+
+    // case GET_TRANSACTIONS:
+    // case ADD_TRANSACTION:
+    // case UPDATE_TRANSACTION:
+    // case DELETE_TRANSACTION:
+
+    // case GET_ACCOUNTS:
+    // case ADD_ACCOUNT:
+    // case UPDATE_ACCOUNT:
+    // case DELETE_ACCOUNT:
+
     case ADD_TRANSACTION:
       const newAccounts = state.accounts.map((item, i) => {
         if (payload.account === item.tag)
-          return payload.cashFlow === CREDIT
+          return payload.cashFlow === INCOME
             ? {
                 ...item,
                 amount: parseInt(item.amount) + parseInt(payload.amount),
@@ -111,7 +141,7 @@ const reducer = (state, action) => {
         ...state,
         cashFlow: newCashFlowAfterTransaction(
           state.cashFlow,
-          CREDIT,
+          INCOME,
           payload.amount,
           state.transactions.length
         ),

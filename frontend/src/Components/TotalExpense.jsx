@@ -5,12 +5,12 @@ import Calender from "./Calender";
 import BasicTable from "./Table";
 import { ContextProvider } from "../Context";
 import Categories from "../data/Categories";
-import { CREDIT } from "../data/constants";
+import { INCOME } from "../data/constants";
 
 const findTotal = (Transactions, startDate, endDate) => {
   let cat = { ...Categories };
 
-  Transactions.filter((e) => e.category !== CREDIT)
+  Transactions.filter((e) => e.category !== INCOME)
     .filter((e) => new Date(e.date) >= startDate && new Date(e.date) <= endDate)
     .forEach((e) => {
       cat[`${e.category}`] += parseInt(e.amount);
@@ -34,7 +34,7 @@ const TotalExpense = () => {
 
     const newCatList = Object.keys(newCat)
       .filter((e) => newCat[`${e}`] !== 0)
-      .filter((e) => e !== CREDIT);
+      .filter((e) => e !== INCOME);
 
     const totalAmt = newCatList.reduce((total = 0, e) => {
       total += newCat[`${e}`];

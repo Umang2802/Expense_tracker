@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CanvasJSReact from "../canvasjs.react";
 import colors from "../data/colors";
-import { CREDIT } from "../data/constants";
-// import { CREDIT } from "../data/constants";
+import { INCOME } from "../data/constants";
 
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
@@ -11,7 +10,7 @@ CanvasJS.addColorSet("newColors", colors);
 const array = (Categories, categories, amount) => {
   const newArray = [];
   Categories.forEach((item) => {
-    if (item !== CREDIT) {
+    if (item !== INCOME) {
       newArray.push({
         y: Math.ceil((categories[`${item}`] / amount) * 100),
         label: item,
@@ -28,10 +27,10 @@ const DoughnutChart = ({ date, categories, totalAmount }) => {
   useEffect(() => {
     const cat = Object.keys(categories)
       .filter((e) => categories[`${e}`] !== 0)
-      .filter((e) => e !== CREDIT);
+      .filter((e) => e !== INCOME);
 
     setnewCat(cat);
-  }, [setnewCat,categories]);
+  }, [setnewCat, categories]);
 
   const options = {
     colorSet: "newColors",

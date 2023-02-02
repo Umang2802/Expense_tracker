@@ -12,6 +12,10 @@ import {
 import { useForm } from "react-hook-form";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { SIGNUP_URL } from "../services/endpoints";
+import { apiCall } from "../redux/createAsyncThunk";
+import { user_register } from "../redux/slices/userSlice";
 
 const fileToDataUri = (file) =>
   new Promise((resolve, reject) => {
@@ -31,6 +35,8 @@ const SignUp = () => {
     formState: { errors },
   } = useForm();
 
+  const dispatch = useDispatch();
+
   const onSubmit = (data) => {
     console.log(data);
     try {
@@ -38,7 +44,14 @@ const SignUp = () => {
         throw new Error("Please re-enter password! Passwords doesn't match");
       else setError("");
 
-      console.log(image);
+      dispatch(
+        apiCall({
+          payload: data,
+          url: SIGNUP_URL,
+          method: "POST",
+          name: user_register,
+        })
+      );
     } catch (error) {
       setError(error.message);
     }
@@ -73,16 +86,28 @@ const SignUp = () => {
             Register
           </Typography>
           <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
+            User Name
+          </Typography>
+          <TextField
+            sx={{ mb: 2 }}
+            id="username"
+            fullWidth
+            placeholder="Enter User Name"
+            {...register("username", { required: true })}
+            error={Boolean(errors.username)}
+            helperText={errors.username ? "User Name is required" : ""}
+          />
+          <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
             Email Id
           </Typography>
           <TextField
             sx={{ mb: 2 }}
-            id="emailId"
+            id="email"
             fullWidth
             placeholder="Enter Email Id"
-            {...register("emailId", { required: true })}
-            error={Boolean(errors.emailId)}
-            helperText={errors.emailId ? "Email Id is required" : ""}
+            {...register("email", { required: true })}
+            error={Boolean(errors.email)}
+            helperText={errors.email ? "Email Id is required" : ""}
           />
           <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
             Password
