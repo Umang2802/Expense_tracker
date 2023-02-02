@@ -6,7 +6,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Box, Divider, MenuItem, Select, Typography } from "@mui/material";
-import dateFormat from "dateformat";
+// import dateFormat from "dateformat";
 import { ContextProvider } from "../Context";
 import { ADD_TRANSACTION, INCOME, ERROR, EXPENSE } from "../data/constants";
 import Categories from "../data/Categories";

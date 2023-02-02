@@ -39,6 +39,7 @@ const SignUp = () => {
 
   const onSubmit = (data) => {
     console.log(data);
+    console.log(image);
     try {
       if (data.confirmPassword !== data.password)
         throw new Error("Please re-enter password! Passwords doesn't match");

@@ -68,21 +68,21 @@ const newCashFlowAfterTransaction = (
   }
 };
 
-const initialState = {
-  user: {
-    token: "",
-    username: "",
-    email: "",
-    profileImage: "",
-    inflow: null,
-    outflow: null,
-    loggedIn: false,
-  },
-  transactions: [],
-  accounts: [],
-};
+// const initialState = {
+//   user: {
+//     token: "",
+//     username: "",
+//     email: "",
+//     profileImage: "",
+//     inflow: null,
+//     outflow: null,
+//     loggedIn: false,
+//   },
+//   transactions: [],
+//   accounts: [],
+// };
 
-const InitialState = {
+const initialState = {
   errorMessage: "",
   loggedIn: false,
   cashFlow: newCashFlow(Transactions, amountArray),
@@ -93,8 +93,8 @@ const InitialState = {
 const reducer = (state, action) => {
   const { type, payload } = action;
   switch (type) {
-    case LOGIN:
-    case REGISTER:
+    // case LOGIN:
+    // case REGISTER:
     // case UPDATE_USER:
     // case GET_USER:
     // case GET_HOME:
