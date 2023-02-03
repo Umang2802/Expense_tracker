@@ -81,7 +81,7 @@ const updateUser = async (req, res) => {
     if (
       user.profileImage &&
       req.body.image &&
-      user.profileImage !== req.body.image
+      user.profileImage.imageId !== req.body.image.imageId
     ) {
       await cloudinary.uploader.destroy(user.profileImage.imageId);
       await cloudinary.uploader.upload(
