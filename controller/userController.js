@@ -42,6 +42,8 @@ const register = async (req, res) => {
         { folder: "Expense_tracker_users" },
         // { upload_preset: "Expense_tracker_users" }
         (error, result) => {
+          console.log("here");
+          console.log(result);
           if (error) throw new Error();
           req.body.profileImage = {
             imageUrl: result.secure_url,
