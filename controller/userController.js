@@ -78,26 +78,27 @@ const updateUser = async (req, res) => {
     delete req.body.outflow;
     const user = req.user;
 
-    if (
-      user.profileImage &&
-      req.body.image &&
-      user.profileImage.imageId !== req.body.image.imageId
-    ) {
-      await cloudinary.uploader.destroy(user.profileImage.imageId);
-      await cloudinary.uploader.upload(
-        req.body.image,
-        { folder: "Expense_tracker_users" },
-        // { upload_preset: "Expense_tracker_users" }
-        (error, result) => {
-          console.log("first");
-          console.log(result);
-          if (error) throw new Error();
-          req.body.profileImage = {
-            imageUrl: result.secure_url,
-            imageId: result.public_id,
-          };
-        }
-      );
+    if (req.body.image) {
+      if (
+        req.body.image.imageId &&
+        user.profileImage.imageId !== req.body.image.imageId
+      ) {
+        await cloudinary.uploader.destroy(user.profileImage.imageId);
+      } else if (!req.body.image.imageId)
+        await cloudinary.uploader.upload(
+          req.body.image,
+          { folder: "Expense_tracker_users" },
+          // { upload_preset: "Expense_tracker_users" }
+          (error, result) => {
+            console.log("first");
+            console.log(result);
+            if (error) throw new Error();
+            req.body.profileImage = {
+              imageUrl: result.secure_url,
+              imageId: result.public_id,
+            };
+          }
+        );
     }
 
     console.log("Body");
