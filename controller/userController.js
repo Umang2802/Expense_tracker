@@ -29,7 +29,6 @@ const login = async (req, res) => {
 
 const register = async (req, res) => {
   try {
-    console.log("here");
     const { email, password } = req.body;
 
     user = await User.findOne({ email });
@@ -43,8 +42,6 @@ const register = async (req, res) => {
         { folder: "Expense_tracker_users" },
         // { upload_preset: "Expense_tracker_users" }
         (error, result) => {
-          console.log("here");
-          console.log(result);
           if (error) throw new Error();
           req.body.profileImage = {
             imageUrl: result.secure_url,
@@ -90,8 +87,6 @@ const updateUser = async (req, res) => {
           { folder: "Expense_tracker_users" },
           // { upload_preset: "Expense_tracker_users" }
           (error, result) => {
-            console.log("first");
-            console.log(result);
             if (error) throw new Error();
             req.body.profileImage = {
               imageUrl: result.secure_url,
@@ -100,10 +95,6 @@ const updateUser = async (req, res) => {
           }
         );
     }
-
-    console.log("Body");
-    console.log(req.body);
-
     const updatedUser = await User.findByIdAndUpdate(req.user._id, req.body, {
       new: true,
     }).select("-password -_id");
