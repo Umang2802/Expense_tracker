@@ -36,9 +36,9 @@ const register = async (req, res) => {
       res.status(400).json({ message: "Email already exists" });
       return;
     }
-    if (req.body.profileImage) {
+    if (req.body.image) {
       cloudinary.uploader.upload(
-        req.body.profileImage,
+        req.body.image,
         { folder: "Expense_tracker_users" },
         // { upload_preset: "Expense_tracker_users" }
         (error, result) => {
@@ -86,14 +86,19 @@ const updateUser = async (req, res) => {
         { folder: "Expense_tracker_users" },
         // { upload_preset: "Expense_tracker_users" }
         (error, result) => {
+          console.log("first");
+          console.log(result);
           if (error) throw new Error();
           req.body.profileImage = {
-            imagUrl: result.secure_url,
+            imageUrl: result.secure_url,
             imageId: result.public_id,
           };
         }
       );
     }
+
+    console.log("Body");
+    console.log(req.body);
 
     const updatedUser = await User.findByIdAndUpdate(req.user._id, req.body, {
       new: true,
