@@ -38,7 +38,7 @@ const register = async (req, res) => {
       return;
     }
     if (req.body.image) {
-      cloudinary.uploader.upload(
+      await cloudinary.uploader.upload(
         req.body.image,
         { folder: "Expense_tracker_users" },
         // { upload_preset: "Expense_tracker_users" }
@@ -83,8 +83,8 @@ const updateUser = async (req, res) => {
       req.body.image &&
       user.profileImage !== req.body.image
     ) {
-      cloudinary.uploader.destroy(user.profileImage.imageId);
-      cloudinary.uploader.upload(
+      await cloudinary.uploader.destroy(user.profileImage.imageId);
+      await cloudinary.uploader.upload(
         req.body.image,
         { folder: "Expense_tracker_users" },
         // { upload_preset: "Expense_tracker_users" }
