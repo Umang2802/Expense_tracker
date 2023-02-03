@@ -6,7 +6,9 @@ const User = require("../models/user");
 const getAllAccountsByUser = async (req, res) => {
   try {
     const accounts = await Account.find({ user: req.user._id }).select("-user");
-    res.status(200).json(accounts);
+    res
+      .status(200)
+      .json({ accounts, message: "Fetched all accounts successfully" });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Server Error" });
@@ -45,7 +47,9 @@ const addAccount = async (req, res) => {
         .session(session)
         .select("-user -_id");
 
-      res.status(200).json(newAccount);
+      res
+        .status(200)
+        .json({ account: newAccount, message: "Added account successfully" });
     });
     session.endSession();
   } catch (error) {
@@ -88,7 +92,9 @@ const updateAccount = async (req, res) => {
       await User.findByIdAndUpdate(user._id, { inflow: newInflow }).session(
         session
       );
-      res.status(200).json(result);
+      res
+        .status(200)
+        .json({ account: result, message: "Account updated successfully" });
     });
     session.endSession();
   } catch (error) {
@@ -128,7 +134,7 @@ const deleteAccount = async (req, res) => {
       await User.findByIdAndUpdate(user._id, user).session(session);
       await Transaction.deleteMany({ account: account_id }).session(session);
       await Account.findByIdAndDelete(account_id).session(session);
-      res.status(200).send();
+      res.status(200).send({ message: "Account deleted successfully" });
     });
     session.endSession();
   } catch (error) {

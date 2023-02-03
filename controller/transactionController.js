@@ -10,7 +10,9 @@ const getAllTransactionsByUser = async (req, res) => {
     })
       .populate("account", "name")
       .select("-user");
-    res.status(200).json(transactions);
+    res
+      .status(200)
+      .json({ transactions, message: "Fetched all transactions successfully" });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Server Error" });
@@ -68,7 +70,10 @@ const addTransaction = async (req, res) => {
         .session(session)
         .select("-user -createdAt -updatedAt");
 
-      res.status(200).json(newTransaction);
+      res.status(200).json({
+        transaction: newTransaction,
+        message: "Added transaction successfully",
+      });
     });
     session.endSession();
   } catch (error) {
@@ -171,7 +176,10 @@ const updateTransaction = async (req, res) => {
 
       await User.findByIdAndUpdate(user._id, user).session(session);
 
-      res.status(200).json(newTransaction);
+      res.status(200).json({
+        transaction: newTransaction,
+        message: "Updated transaction successfully",
+      });
     });
     session.endSession();
   } catch (error) {
@@ -217,7 +225,7 @@ const deleteTransaction = async (req, res) => {
         session
       );
       await Transaction.findByIdAndDelete(transaction_id).session(session);
-      res.status(200).send();
+      res.status(200).send({ message: "Successfully deleted transaction" });
     });
     session.endSession();
   } catch (error) {

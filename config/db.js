@@ -9,7 +9,7 @@ const connection = async () => {
       dbName: "expensetracker",
     });
 
-    console.log(`Database connected : ${con.connection.host}`);
+    console.log(`Database connected : ${con.connection.name}`);
   } catch (error) {
     console.error(`Error: ${error.message}`);
     process.exit(1);

@@ -20,7 +20,7 @@ const login = async (req, res) => {
     }
 
     const token = await createJwtToken(user);
-    res.status(200).json({ token });
+    res.status(200).json({ token, message: "Logged in successfully" });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Server Error" });
@@ -37,18 +37,18 @@ const register = async (req, res) => {
       return;
     }
     if (req.body.profileImage) {
-      //cloudinary
-      cloudinary.uploader
-        .upload(
-          req.body.profileImage
-          // { upload_preset: "Expense_tracker_users" }
-          // (error, result) => {
-          //   console.log("error" + error);
-          //   req.body.profileImage = result;
-          // }
-        )
-        .then((res) => console.log("success"))
-        .catch((err) => console.log(err));
+      cloudinary.uploader.upload(
+        req.body.profileImage,
+        { folder: "Expense_tracker_users" },
+        // { upload_preset: "Expense_tracker_users" }
+        (error, result) => {
+          if (error) throw new Error();
+          req.body.profileImage = {
+            imageUrl: result.secure_url,
+            imageId: result.public_id,
+          };
+        }
+      );
     }
 
     delete req.body.inflow;
@@ -60,7 +60,7 @@ const register = async (req, res) => {
     await user.save();
 
     const token = await createJwtToken(user);
-    res.status(200).json({ token });
+    res.status(200).json({ token, message: "Signup successfully" });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Server Error" });
@@ -73,11 +73,34 @@ const updateUser = async (req, res) => {
     delete req.body.email;
     delete req.body.inflow;
     delete req.body.outflow;
+    const user = req.user;
+
+    if (
+      user.profileImage &&
+      req.body.profileImage &&
+      user.profileImage !== req.body.profileImage
+    ) {
+      cloudinary.uploader.destroy(user.profileImage.imageId);
+      cloudinary.uploader.upload(
+        req.body.profileImage,
+        { folder: "Expense_tracker_users" },
+        // { upload_preset: "Expense_tracker_users" }
+        (error, result) => {
+          if (error) throw new Error();
+          req.body.profileImage = {
+            imagUrl: result.secure_url,
+            imageId: result.public_id,
+          };
+        }
+      );
+    }
 
     const updatedUser = await User.findByIdAndUpdate(req.user._id, req.body, {
       new: true,
     }).select("-password -_id");
-    res.status(200).json(updatedUser);
+    res
+      .status(200)
+      .json({ updatedUser, message: "Profile updated successfully" });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Server Error" });
@@ -86,7 +109,7 @@ const updateUser = async (req, res) => {
 
 const info = async (req, res) => {
   try {
-    res.status(200).json(req.user);
+    res.status(200).json({ user: req.user, message: "Success" });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Server Error" });
