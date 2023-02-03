@@ -44,6 +44,7 @@ const SignUp = () => {
       if (data.confirmPassword !== data.password)
         throw new Error("Please re-enter password! Passwords doesn't match");
       else setError("");
+      data.image = image;
 
       dispatch(
         apiCall({

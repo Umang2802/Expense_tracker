@@ -1,4 +1,4 @@
-export const baseURL = "http://localhost:5000";
+export const baseURL = "https://expensetracker.cyclic.app";
 
 //Auth URLs
 export const GET_USER_URL = "/user/";

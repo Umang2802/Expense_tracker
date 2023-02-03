@@ -77,12 +77,12 @@ const updateUser = async (req, res) => {
 
     if (
       user.profileImage &&
-      req.body.profileImage &&
-      user.profileImage !== req.body.profileImage
+      req.body.image &&
+      user.profileImage !== req.body.image
     ) {
       cloudinary.uploader.destroy(user.profileImage.imageId);
       cloudinary.uploader.upload(
-        req.body.profileImage,
+        req.body.image,
         { folder: "Expense_tracker_users" },
         // { upload_preset: "Expense_tracker_users" }
         (error, result) => {
