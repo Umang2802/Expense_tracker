@@ -8,11 +8,28 @@ import RecentTransactions from "../Components/RecentTransactions";
 import AccountCards from "../Components/AccountCards";
 import AddButton from "../Components/AddButton";
 import { ContextProvider } from "../Context";
+import { GET_HOME_DATA_URL } from "../services/endpoints";
+import { useDispatch, useSelector } from "react-redux";
+import { apiCall } from "../redux/createAsyncThunk";
+import { home } from "../redux/slices/userSlice";
 
 const Home = () => {
   const { state } = useContext(ContextProvider);
   const [open, setOpen] = useState(false);
   const [openTransactionModal, setOpenTransactionModal] = useState(false);
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.user.token);
+
+  React.useEffect(() => {
+    dispatch(
+      apiCall({
+        url: GET_HOME_DATA_URL,
+        method: "GET",
+        name: home,
+        token: token,
+      })
+    );
+  }, [token, dispatch]);
 
   return (
     <>

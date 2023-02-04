@@ -13,10 +13,7 @@ import { Button } from "@mui/material";
 import { ContextProvider } from "../Context";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { apiCall } from "../redux/createAsyncThunk";
-import { GET_USER_URL } from "../services/endpoints";
-import { info } from "../redux/slices/userSlice";
+import { useSelector } from "react-redux";
 
 const sidebarItems = [
   { name: "Dashboard", link: "/" },
@@ -31,8 +28,9 @@ function Sidebar({ drawerWidth }) {
   };
   const { state } = React.useContext(ContextProvider);
   const { cashFlow } = state;
-  const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
+  console.log("user");
+  console.log(user);
 
   const balance = cashFlow
     .filter((item, i) => i < 2)
@@ -84,17 +82,6 @@ function Sidebar({ drawerWidth }) {
       </Box>
     </div>
   );
-
-  React.useEffect(() => {
-    dispatch(
-      apiCall({
-        url: GET_USER_URL,
-        method: "GET",
-        name: info,
-        token: user.token,
-      })
-    );
-  }, [user.token, dispatch]);
 
   return (
     <Box

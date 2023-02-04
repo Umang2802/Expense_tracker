@@ -1,6 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { useSelector } from "react-redux";
 import { baseURL } from "../services/endpoints";
 import { success, error } from "./slices/responseSlice";
 
