@@ -2,7 +2,7 @@ import * as React from "react";
 import Typography from "@mui/material/Typography";
 import { Button, Paper } from "@mui/material";
 
-export default function BasicCard({ amount, tag, color, onClick }) {
+export default function BasicCard({ value, tag, color, onClick }) {
   return (
     <Paper sx={{ p: 2 }}>
       <Button onClick={onClick}>
@@ -15,10 +15,10 @@ export default function BasicCard({ amount, tag, color, onClick }) {
           color={color}
         >
           {tag === "Transaction" || tag === "Add Account"
-            ? amount
-            : amount < 0
-            ? `-$${Math.abs(amount)}`
-            : `$${amount}`}
+            ? value
+            : value < 0
+            ? `-$${Math.abs(value)}`
+            : `$${value}`}
         </Typography>
       </Button>
       <Typography variant="caption" component="p">

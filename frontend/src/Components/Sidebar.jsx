@@ -10,7 +10,6 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Avatar from "@mui/material/Avatar";
 import { Button } from "@mui/material";
-import { ContextProvider } from "../Context";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -26,15 +25,8 @@ function Sidebar({ drawerWidth }) {
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-  const { state } = React.useContext(ContextProvider);
-  const { cashFlow } = state;
-  const user = useSelector((state) => state.user);
-  console.log("user");
-  console.log(user);
 
-  const balance = cashFlow
-    .filter((item, i) => i < 2)
-    .reduce((diff, item) => diff.amount - item.amount);
+  const user = useSelector((state) => state.user);
 
   const drawer = (
     <div>
@@ -45,7 +37,11 @@ function Sidebar({ drawerWidth }) {
       <Box sx={{ p: 4 }}>
         <Avatar
           alt="Remy Sharp"
-          src="/static/images/avatar/1.jpg"
+          src={
+            user.user.profileImage
+              ? user.user.profileImage.imageUrl
+              : "/static/images/avatar/1.jpg"
+          }
           sx={{ width: 56, height: 56, margin: "auto", mb: 2 }}
         />
         <Typography>{user.user.username}</Typography>
@@ -61,7 +57,7 @@ function Sidebar({ drawerWidth }) {
           }}
         >
           <AccountBalanceWalletIcon fontSize="small" />
-          &nbsp;${balance}
+          &nbsp;${user.user.inflow - user.user.outflow}
         </Button>
         <Divider />
         <List>

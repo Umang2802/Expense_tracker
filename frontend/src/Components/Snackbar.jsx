@@ -1,33 +1,44 @@
 import * as React from "react";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
-import { ContextProvider } from "../Context";
-// import { ERROR } from "../data/constants";
+import { useSelector } from "react-redux";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
 export default function CustomizedSnackbars() {
-  const { state } = React.useContext(ContextProvider);
+  const response = useSelector((state) => state.response);
+  console.log("from snackbar");
+  console.log(response);
 
+  const [open, setOpen] = React.useState(
+    response.message !== "" ? true : false
+  );
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
+    setOpen(false);
   };
+
+  React.useEffect(() => {
+    setOpen(response.message !== "" ? true : false);
+  }, [response]);
 
   return (
     <>
-      <Snackbar
-        open={state.errorMessage === "" ? false : true}
-        autoHideDuration={6000}
-        onClose={handleClose}
-      >
-        <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
-          {state.errorMessage}
-        </Alert>
-      </Snackbar>
+      {response.message && (
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          <Alert
+            onClose={handleClose}
+            severity={response.responseStates}
+            sx={{ width: "100%" }}
+          >
+            {response.message}
+          </Alert>
+        </Snackbar>
+      )}
     </>
   );
 }

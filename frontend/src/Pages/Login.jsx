@@ -8,9 +8,9 @@ import {
   Typography,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { apiCall } from "../redux/createAsyncThunk";
 import { LOGIN_URL } from "../services/endpoints";
 import { login } from "../redux/slices/userSlice";
@@ -24,22 +24,45 @@ const Login = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const state = useSelector((state) => state);
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log(data);
-    dispatch(
+    const res = await dispatch(
       apiCall({
         payload: data,
         url: LOGIN_URL,
         method: "POST",
         name: login,
       })
-    ).then((res) => {
-      if (res.type === "user/user/login/fulfilled") {
-        navigate("/");
-      }
-    });
+    );
+
+    console.log(res);
+
+    if (res.type === "response/fulfilled") {
+      console.log("Dispatch was successful");
+    } else if (res.type === "response/rejected") {
+      console.log("Dispatch failed");
+    }
   };
+
+  useEffect(() => {
+    // if (state.user.user.loggedIn) {
+    //   navigate("/");
+    // }
+    if (
+      state.user.user.loggedIn &&
+      state.response.message !== "Token is not vaild"
+    ) {
+      navigate("/");
+    }
+    if (
+      state.user.user.loggedIn &&
+      state.response.message !== "Authorization denied"
+    ) {
+      navigate("/");
+    }
+  }, [state.user.user.loggedIn, state.response.message, navigate]);
 
   return (
     <Container

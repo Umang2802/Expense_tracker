@@ -10,6 +10,7 @@ import Container from "./Components/Container";
 import SignUp from "./Pages/SignUp";
 import theme from "./Typography";
 import CustomizedSnackbars from "./Components/Snackbar";
+import Loader from "./Components/Loader";
 
 const drawerWidth = 240;
 
@@ -55,6 +56,7 @@ function App() {
             </Box>
           </Router>
           <CustomizedSnackbars />
+          <Loader />
         </div>
       </ThemeProvider>
     </Context>

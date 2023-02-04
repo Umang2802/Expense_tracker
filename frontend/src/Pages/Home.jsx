@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState, useEffect } from "react";
 import BasicCard from "../Components/Card";
 import { Grid, Typography } from "@mui/material";
 import TotalExpense from "../Components/TotalExpense";
@@ -7,29 +7,36 @@ import NewTransactionModal from "../Components/NewTransactionModal";
 import RecentTransactions from "../Components/RecentTransactions";
 import AccountCards from "../Components/AccountCards";
 import AddButton from "../Components/AddButton";
-import { ContextProvider } from "../Context";
 import { GET_HOME_DATA_URL } from "../services/endpoints";
 import { useDispatch, useSelector } from "react-redux";
 import { apiCall } from "../redux/createAsyncThunk";
 import { home } from "../redux/slices/userSlice";
+import { BALANCE, EXPENSE, INCOME, TRANSACTION } from "../data/constants";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-  const { state } = useContext(ContextProvider);
   const [open, setOpen] = useState(false);
   const [openTransactionModal, setOpenTransactionModal] = useState(false);
   const dispatch = useDispatch();
-  const token = useSelector((state) => state.user.token);
+  const navigate = useNavigate();
+  const state = useSelector((state) => state);
 
-  React.useEffect(() => {
+  useEffect(() => {
     dispatch(
       apiCall({
         url: GET_HOME_DATA_URL,
         method: "GET",
         name: home,
-        token: token,
+        token: state.user.token,
       })
     );
-  }, [token, dispatch]);
+  }, [state.user.token, dispatch]);
+
+  useEffect(() => {
+    if (state.response.responseStates === "error") {
+      navigate("/login");
+    }
+  }, [state.response.responseStates, navigate]);
 
   return (
     <>
@@ -37,17 +44,34 @@ const Home = () => {
         Dashboard
       </Typography>
       <Grid container spacing={2} justifyContent="left" sx={{ mb: 2 }}>
-        {state.cashFlow.map((item, index) => {
-          return (
-            <Grid item xs={3} key={index}>
-              <BasicCard
-                amount={item.amount}
-                tag={item.tag}
-                color={item.color}
-              />
-            </Grid>
-          );
-        })}
+        <Grid item xs={3}>
+          <BasicCard
+            value={state.user.user.inflow}
+            tag={INCOME}
+            color="green"
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <BasicCard
+            value={state.user.user.outflow}
+            tag={EXPENSE}
+            color="red"
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <BasicCard
+            value={state.user.user.inflow - state.user.user.outflow}
+            tag={BALANCE}
+            color="blue"
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <BasicCard
+            value={state.user.transactions.length}
+            tag={TRANSACTION}
+            color="grey"
+          />
+        </Grid>
       </Grid>
       <AccountCards setOpen={setOpen} />
       <TotalExpense />

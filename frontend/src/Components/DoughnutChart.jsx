@@ -21,7 +21,7 @@ const array = (Categories, categories, amount) => {
 };
 
 const DoughnutChart = ({ date, categories, totalAmount }) => {
-  // const { state } = useContext(ContextProvider);
+  console.log(categories);
   const [newCat, setnewCat] = useState([]);
 
   useEffect(() => {

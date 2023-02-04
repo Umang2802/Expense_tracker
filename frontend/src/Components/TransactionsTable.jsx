@@ -8,8 +8,8 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { ContextProvider } from "../Context";
 import { INCOME } from "../data/constants";
+import { useSelector } from "react-redux";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -31,8 +31,18 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
+function formatDate(dateString) {
+  const date = new Date(dateString);
+
+  const day = date.getDate().toString().padStart(2, "0");
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const year = date.getFullYear();
+
+  return `${day}-${month}-${year}`;
+}
+
 const TransactionsTable = ({ noOfTransactions, title }) => {
-  const Context = React.useContext(ContextProvider);
+  const transactions = useSelector((state) => state.user.transactions);
 
   return (
     <Paper elevation={2} sx={{ mt: 2 }}>
@@ -53,15 +63,17 @@ const TransactionsTable = ({ noOfTransactions, title }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {Context.state.transactions?.map(
+              {transactions?.map(
                 (transaction, index) =>
                   index < noOfTransactions && (
                     <StyledTableRow key={index}>
                       <StyledTableCell component="th" scope="row">
-                        {transaction.date}
+                        {formatDate(transaction.updatedAt)}
                       </StyledTableCell>
                       <StyledTableCell>{transaction.category}</StyledTableCell>
-                      <StyledTableCell>{transaction.account}</StyledTableCell>
+                      <StyledTableCell>
+                        {transaction.account.name}
+                      </StyledTableCell>
                       <StyledTableCell>
                         {transaction.description}
                       </StyledTableCell>
