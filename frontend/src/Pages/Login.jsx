@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { apiCall } from "../redux/createAsyncThunk";
 import { LOGIN_URL } from "../services/endpoints";
@@ -23,8 +23,10 @@ const Login = () => {
   } = useForm();
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const onSubmit = (data) => {
+    console.log(data);
     dispatch(
       apiCall({
         payload: data,
@@ -32,7 +34,11 @@ const Login = () => {
         method: "POST",
         name: login,
       })
-    );
+    ).then((res) => {
+      if (res.type === "user/user/login/fulfilled") {
+        navigate("/");
+      }
+    });
   };
 
   return (

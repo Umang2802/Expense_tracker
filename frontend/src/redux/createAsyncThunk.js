@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { useSelector } from "react-redux";
 import { baseURL } from "../services/endpoints";
 import { success, error } from "./slices/responseSlice";
 
@@ -8,9 +9,11 @@ const axiosConfig = axios.create({
 });
 
 export const apiCall = (params) =>
-  createAsyncThunk("response", async (params, thunkAPI) => {
-    // console.log(params);
+  createAsyncThunk(`user/${params.name}`, async (params, thunkAPI) => {
+    console.log(params);
     try {
+      // const token = useSelector((state) => state.user.user.token);
+      // console.log(token);
       const res = await axiosConfig({
         url: params.url,
         method: params.method,
@@ -19,9 +22,9 @@ export const apiCall = (params) =>
         },
         data: params.payload,
       });
-      //   console.log(res.data);
+      console.log(res);
       thunkAPI.dispatch(params.name(res.data));
-      thunkAPI.dispatch(success(res.data));
+      thunkAPI.dispatch(success(res.data.message));
     } catch (err) {
       console.log(err.response.data.message);
       thunkAPI.dispatch(error(err.response.data.message));
