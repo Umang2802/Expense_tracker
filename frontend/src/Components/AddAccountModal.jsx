@@ -59,7 +59,7 @@ export default function FormDialog({ open, setOpen }) {
       <DialogTitle>Enter Account Details</DialogTitle>
       <Divider />
       <DialogContent>
-        <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+        <Box noValidate component="form" onSubmit={handleSubmit(onSubmit)}>
           <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
             Account Name
           </Typography>
@@ -68,9 +68,15 @@ export default function FormDialog({ open, setOpen }) {
             id="accountName"
             fullWidth
             sx={{ mb: 2 }}
-            {...register("name", { required: true })}
+            {...register("name", {
+              required: "Account Name is required",
+              pattern: {
+                value: /^[A-Za-z0-9 ]+$/i,
+                message: "Special characters are not allowed",
+              },
+            })}
             error={Boolean(errors.name)}
-            helperText={errors.name ? "Account name is required" : ""}
+            helperText={errors.name ? errors.name.message : ""}
           />
           <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
             Initial Amount
@@ -78,15 +84,26 @@ export default function FormDialog({ open, setOpen }) {
           <TextField
             id="amount"
             type="number"
+            sx={{ mb: 1 }}
             inputProps={{ min: 0 }}
             fullWidth
-            {...register("amount", { required: true })}
+            {...register("amount", {
+              required: "Initial Amount is required",
+              min: {
+                value: 0,
+                message: "Amount should be positive",
+              },
+            })}
             error={Boolean(errors.amount)}
-            helperText={errors.amount ? "Initial Amount is required" : ""}
+            helperText={errors.amount ? errors.amount.message : ""}
           />
           <DialogActions>
-            <Button type="submit">Add</Button>
-            <Button onClick={handleClose}>Cancel</Button>
+            <Button variant="contained" type="submit" sx={{ px: 4 }}>
+              Add
+            </Button>
+            <Button variant="contained" color="error" onClick={handleClose}>
+              Cancel
+            </Button>
           </DialogActions>
         </Box>
       </DialogContent>
