@@ -9,9 +9,8 @@ import { useSelector } from "react-redux";
 
 const findTotal = (Transactions, startDate, endDate) => {
   let cat = { ...Categories };
-  // console.log(Transactions);
 
-  Transactions.filter((e) => e.category !== INCOME)
+  Transactions.filter((e) => e.cashFlow !== INCOME)
     .filter(
       (e) =>
         new Date(e.updatedAt) >= startDate && new Date(e.updatedAt) <= endDate

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -6,77 +6,61 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Box, Divider, MenuItem, Select, Typography } from "@mui/material";
-// import dateFormat from "dateformat";
-import { ContextProvider } from "../Context";
-import { ADD_TRANSACTION, INCOME, ERROR, EXPENSE } from "../data/constants";
+import { INCOME, EXPENSE } from "../data/constants";
 import Categories from "../data/Categories";
-// import { useForm } from "react-hook-form";
-import axios from "axios";
+import { useForm } from "react-hook-form";
+import { apiCall } from "../redux/createAsyncThunk";
+import { useNavigate } from "react-router-dom";
+import { add_transaction } from "../redux/slices/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { ADD_TRANSACTION_URL } from "../services/endpoints";
 
 export default function FormDialog({
   openTransactionModal,
   setOpenTransactionModal,
 }) {
-  // const {
-  //   register,
-  //   handleSubmit,
-  //   formState: { errors },
-  // } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-  // const onSubmit = (data) => console.log(data);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.user);
 
-  const [amount, setAmount] = useState("");
-  const [category, setCategory] = useState(INCOME);
-  const [description, setDescription] = useState("");
-  const [account, setAccount] = useState("");
-  const [cashFlow, setCashFlow] = useState("");
-  const { state, dispatch } = useContext(ContextProvider);
-
-  const handleClose = () => {
-    setOpenTransactionModal(false);
-  };
-
-  const newTransactionHandler = () => {
-    axios
-      .post("http://localhost:5000/transaction/add", {
-        // date: dateFormat(new Date(), "yyyy-mm-dd").toString(),
-        category: category,
-        account: account,
-        description: description,
-        // amount: amount,
-        cashFlow: cashFlow,
-      })
-      .then((res) =>
-        dispatch({
-          type: ADD_TRANSACTION,
-          payload: {
-            date: res.data.date,
-            category: res.data.category,
-            account: res.data.account,
-            description: res.data.description,
-            amount: res.data.amount,
-            cashFlow: res.data.cashFlow,
-          },
-        })
-      )
-      .catch((err) =>
-        dispatch({
-          type: ERROR,
-          payload: {
-            errorMessage: "Failed to add transaction",
-          },
+  const onSubmit = async (data) => {
+    console.log(data);
+    try {
+      const res = await dispatch(
+        apiCall({
+          payload: data,
+          url: ADD_TRANSACTION_URL,
+          method: "POST",
+          name: add_transaction,
+          token: user.token,
         })
       );
 
-    setOpenTransactionModal(false);
-    setAccount("");
-    setAmount("");
-    setCategory("");
-    setDescription("");
-    setCashFlow("");
-  };
+      console.log(res);
 
-  useEffect(() => {}, []);
+      if (res.meta.requestStatus === "fulfilled") {
+        console.log("Dispatch was successful");
+        setOpenTransactionModal(false);
+      } else if (res.meta.requestStatus === "rejected") {
+        console.log("Dispatch failed");
+        navigate("/login");
+      }
+    } catch (rejectedValueOrSerializedError) {
+      console.log(rejectedValueOrSerializedError);
+    }
+  };
+  const [category, setCategory] = useState(INCOME);
+  const [account, setAccount] = useState("");
+  const [cashFlow, setCashFlow] = useState("");
+  const handleClose = () => {
+    setOpenTransactionModal(false);
+  };
 
   return (
     <Dialog open={openTransactionModal} onClose={handleClose} sx={{ p: 2 }}>
@@ -92,6 +76,7 @@ export default function FormDialog({
             m: "auto",
             minWidth: 500,
           }}
+          onSubmit={handleSubmit(onSubmit)}
         >
           <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
             Description
@@ -101,8 +86,9 @@ export default function FormDialog({
             sx={{ mb: 1 }}
             id="description"
             fullWidth
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            {...register("description", { required: true })}
+            error={Boolean(errors.description)}
+            helperText={errors.description ? "Description is required" : ""}
           />
           <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
             Cash Flow
@@ -153,9 +139,9 @@ export default function FormDialog({
             sx={{ mb: 1 }}
             onChange={(e) => setAccount(e.target.value)}
           >
-            {state.accounts.map((item, index) => (
-              <MenuItem key={index} value={item.tag}>
-                {item.tag}
+            {user.accounts.map((item, index) => (
+              <MenuItem key={index} value={item.name}>
+                {item.name}
               </MenuItem>
             ))}
           </Select>
@@ -168,15 +154,16 @@ export default function FormDialog({
             type="number"
             inputProps={{ min: 0 }}
             fullWidth
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            {...register("amount", { required: true })}
+            error={Boolean(errors.amount)}
+            helperText={errors.amount ? "Amount is required" : ""}
           />
+          <DialogActions>
+            <Button type="submit">Add</Button>
+            <Button onClick={handleClose}>Cancel</Button>
+          </DialogActions>
         </Box>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={newTransactionHandler}>Add</Button>
-        <Button onClick={handleClose}>Cancel</Button>
-      </DialogActions>
     </Dialog>
   );
 }

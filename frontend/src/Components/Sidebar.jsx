@@ -11,8 +11,9 @@ import Typography from "@mui/material/Typography";
 import Avatar from "@mui/material/Avatar";
 import { Button } from "@mui/material";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../redux/slices/userSlice";
 
 const sidebarItems = [
   { name: "Dashboard", link: "/" },
@@ -21,12 +22,16 @@ const sidebarItems = [
 ];
 
 function Sidebar({ drawerWidth }) {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
   const user = useSelector((state) => state.user);
+
+  console.log("user", user);
 
   const drawer = (
     <div>
@@ -61,18 +66,44 @@ function Sidebar({ drawerWidth }) {
         </Button>
         <Divider />
         <List>
-          {sidebarItems.map((item, index) => (
-            <ListItem key={item.name} disablePadding>
-              <ListItemButton>
-                <Link
-                  to={item.link}
-                  style={{ textDecoration: "none", color: "black" }}
-                >
-                  <ListItemText primary={item.name} />
-                </Link>
-              </ListItemButton>
-            </ListItem>
-          ))}
+          {sidebarItems.map((item, index) =>
+            item.name === "Login" ? (
+              user.loggedIn ? (
+                <ListItem key={item.name} disablePadding>
+                  <ListItemButton>
+                    <Link
+                      to={item.link}
+                      style={{ textDecoration: "none", color: "black" }}
+                    >
+                      <ListItemText primary={item.name} />
+                    </Link>
+                  </ListItemButton>
+                </ListItem>
+              ) : (
+                <ListItem key="Logout" disablePadding>
+                  <ListItemButton
+                    onClick={() => {
+                      dispatch(logout());
+                      navigate("/login");
+                    }}
+                  >
+                    <ListItemText primary="Logout" />
+                  </ListItemButton>
+                </ListItem>
+              )
+            ) : (
+              <ListItem key={item.name} disablePadding>
+                <ListItemButton>
+                  <Link
+                    to={item.link}
+                    style={{ textDecoration: "none", color: "black" }}
+                  >
+                    <ListItemText primary={item.name} />
+                  </Link>
+                </ListItemButton>
+              </ListItem>
+            )
+          )}
         </List>
         <Divider />
       </Box>

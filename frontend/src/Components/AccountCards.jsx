@@ -25,16 +25,16 @@ const AccountCards = ({ setOpen }) => {
             </Grid>
           );
         })}
-        {accounts.length < 4 && (
-          <Grid item xs={3}>
-            <BasicCard
-              value={<AddIcon />}
-              tag="Add Account"
-              color="grey"
-              onClick={() => setOpen(true)}
-            />
-          </Grid>
-        )}
+        {/* {accounts.length < 4 && ( */}
+        <Grid item xs={3}>
+          <BasicCard
+            value={<AddIcon />}
+            tag="Add Account"
+            color="grey"
+            onClick={() => setOpen(true)}
+          />
+        </Grid>
+        {/* )} */}
       </Grid>
     </>
   );

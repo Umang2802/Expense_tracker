@@ -9,8 +9,6 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 export default function CustomizedSnackbars() {
   const response = useSelector((state) => state.response);
-  console.log("from snackbar");
-  console.log(response);
 
   const [open, setOpen] = React.useState(
     response.message !== "" ? true : false

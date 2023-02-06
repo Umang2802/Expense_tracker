@@ -28,28 +28,31 @@ const Login = () => {
 
   const onSubmit = async (data) => {
     console.log(data);
-    const res = await dispatch(
-      apiCall({
-        payload: data,
-        url: LOGIN_URL,
-        method: "POST",
-        name: login,
-      })
-    );
+    try {
+      const res = await dispatch(
+        apiCall({
+          payload: data,
+          url: LOGIN_URL,
+          method: "POST",
+          name: login,
+        })
+      );
 
-    console.log(res);
+      console.log(res);
 
-    if (res.type === "response/fulfilled") {
-      console.log("Dispatch was successful");
-    } else if (res.type === "response/rejected") {
-      console.log("Dispatch failed");
+      if (res.meta.requestStatus === "fulfilled") {
+        console.log("Dispatch was successful");
+        navigate("/");
+      } else if (res.meta.requestStatus === "rejected") {
+        console.log("Dispatch failed");
+        // navigate("/login");
+      }
+    } catch (rejectedValueOrSerializedError) {
+      console.log(rejectedValueOrSerializedError);
     }
   };
 
   useEffect(() => {
-    // if (state.user.user.loggedIn) {
-    //   navigate("/");
-    // }
     if (
       state.user.user.loggedIn &&
       state.response.message !== "Token is not vaild"
