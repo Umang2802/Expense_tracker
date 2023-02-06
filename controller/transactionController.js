@@ -66,9 +66,12 @@ const addTransaction = async (req, res) => {
       );
       await User.findByIdAndUpdate(user._id, user).session(session);
 
-      const newTransaction = await Transaction.findById(transaction._id)
+      let newTransaction = await Transaction.findById(transaction._id)
         .session(session)
-        .select("-user -createdAt -updatedAt");
+        .select("-user -createdAt");
+      newTransaction.account = await Account.findById(newTransaction.account)
+        .select("name")
+        .session(session);
 
       res.status(200).json({
         transaction: newTransaction,

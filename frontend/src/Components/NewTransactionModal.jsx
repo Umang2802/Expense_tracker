@@ -5,10 +5,19 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Box, Divider, MenuItem, Select, Typography } from "@mui/material";
+import {
+  Box,
+  Divider,
+  FormControl,
+  FormHelperText,
+  Grid,
+  MenuItem,
+  Select,
+  Typography,
+} from "@mui/material";
 import { INCOME, EXPENSE } from "../data/constants";
 import Categories from "../data/Categories";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { apiCall } from "../redux/createAsyncThunk";
 import { useNavigate } from "react-router-dom";
 import { add_transaction } from "../redux/slices/userSlice";
@@ -23,7 +32,10 @@ export default function FormDialog({
     register,
     handleSubmit,
     formState: { errors },
+    control,
   } = useForm();
+
+  const [cF, setCF] = useState("");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -55,9 +67,7 @@ export default function FormDialog({
       console.log(rejectedValueOrSerializedError);
     }
   };
-  const [category, setCategory] = useState(INCOME);
-  const [account, setAccount] = useState("");
-  const [cashFlow, setCashFlow] = useState("");
+
   const handleClose = () => {
     setOpenTransactionModal(false);
   };
@@ -83,68 +93,131 @@ export default function FormDialog({
           </Typography>
           <TextField
             autoFocus
-            sx={{ mb: 1 }}
+            sx={{ mb: 2 }}
             id="description"
             fullWidth
-            {...register("description", { required: true })}
+            {...register("description", {
+              required: "Description is required",
+              pattern: {
+                value: /^[A-Za-z0-9 ]+$/i,
+                message: "Special characters are not allowed",
+              },
+            })}
             error={Boolean(errors.description)}
-            helperText={errors.description ? "Description is required" : ""}
+            helperText={errors.description ? errors.description.message : ""}
           />
+          <Grid container sx={{ mb: 2 }}>
+            <Grid container item xs={12} md={5}>
+              <Grid item xs={12} md={12}>
+                <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
+                  Choose CashFlow
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={12}>
+                <FormControl error={Boolean(errors.cashFlow)}>
+                  <Controller
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        displayEmpty
+                        {...register("cashFlow", { required: true })}
+                        onChange={(e) => setCF(e.target.value)}
+                        defaultValue=""
+                        // inputProps={{ style: "width: 100%" }}
+                      >
+                        <MenuItem value="">None</MenuItem>
+                        <MenuItem value={INCOME}>{INCOME}</MenuItem>
+                        <MenuItem value={EXPENSE}>{EXPENSE}</MenuItem>
+                      </Select>
+                    )}
+                    control={control}
+                    name="cashFlow"
+                  />
+                  <FormHelperText>
+                    {errors.cashFlow ? "CashFlow is required" : ""}
+                  </FormHelperText>
+                </FormControl>
+              </Grid>
+            </Grid>
+            <Grid container item xs={1} md={1} justifyContent="center">
+              <Divider orientation="vertical" />
+            </Grid>
+            <Grid container item xs={12} md={5}>
+              <Grid item xs={12} md={12}>
+                <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
+                  Choose Category
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={12}>
+                {cF === INCOME ? (
+                  <TextField
+                    disabled
+                    sx={{ mb: 1 }}
+                    id="incomeCategory"
+                    fullWidth
+                    {...register("category", { required: true })}
+                    value={INCOME}
+                  />
+                ) : (
+                  <FormControl error={Boolean(errors.category)}>
+                    <Controller
+                      render={({ field }) => (
+                        <Select
+                          {...field}
+                          displayEmpty
+                          {...register("category", { required: true })}
+                        >
+                          <MenuItem value="">None</MenuItem>
+                          {Object.keys(Categories).map(
+                            (item, index) =>
+                              item !== INCOME && (
+                                <MenuItem key={index} value={item}>
+                                  {item}
+                                </MenuItem>
+                              )
+                          )}
+                        </Select>
+                      )}
+                      control={control}
+                      name="category"
+                      defaultValue=""
+                    />
+                    <FormHelperText>
+                      {errors.category ? "Category is required" : ""}
+                    </FormHelperText>
+                  </FormControl>
+                )}
+              </Grid>
+            </Grid>
+          </Grid>
+
           <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
-            Cash Flow
+            Choose Account
           </Typography>
-          <Select
-            sx={{ mb: 1 }}
-            id="cashFlow-select"
-            displayEmpty
-            value={cashFlow}
-            onChange={(e) => setCashFlow(e.target.value)}
-          >
-            <MenuItem value="">None</MenuItem>
-            <MenuItem value={INCOME}>{INCOME}</MenuItem>
-            <MenuItem value={EXPENSE}>{EXPENSE}</MenuItem>
-          </Select>
-          <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
-            Category
-          </Typography>
-          {cashFlow === INCOME ? (
-            <TextField
-              disabled
-              sx={{ mb: 1 }}
-              id="incomeCategory"
-              fullWidth
-              value={INCOME}
+          <FormControl error={Boolean(errors.account)} sx={{ mb: 2 }}>
+            <Controller
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  displayEmpty
+                  {...register("account", { required: true })}
+                >
+                  <MenuItem value="">None</MenuItem>
+                  {user.accounts.map((item, index) => (
+                    <MenuItem key={index} value={item._id}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              )}
+              control={control}
+              name="account"
+              defaultValue=""
             />
-          ) : (
-            <Select
-              id="category-select"
-              value={category}
-              fullWidth
-              sx={{ mb: 1 }}
-              onChange={(e) => setCategory(e.target.value)}
-            >
-              {Object.keys(Categories).map((item, index) => (
-                <MenuItem key={index} value={item}>
-                  {item}
-                </MenuItem>
-              ))}
-            </Select>
-          )}
-          <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
-            Account
-          </Typography>
-          <Select
-            id="account-select"
-            value={account}
-            sx={{ mb: 1 }}
-            onChange={(e) => setAccount(e.target.value)}
-          >
-            {user.accounts.map((item, index) => (
-              <MenuItem key={index} value={item.name}>
-                {item.name}
-              </MenuItem>
-            ))}
-          </Select>
+            <FormHelperText>
+              {errors.account ? "Account is required" : ""}
+            </FormHelperText>
+          </FormControl>
           <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
             Amount
           </Typography>
@@ -154,13 +227,24 @@ export default function FormDialog({
             type="number"
             inputProps={{ min: 0 }}
             fullWidth
-            {...register("amount", { required: true })}
+            {...register("amount", {
+              required: "Amount is required",
+              min: {
+                value: 0,
+                message: "Amount should be positive",
+              },
+            })}
             error={Boolean(errors.amount)}
-            helperText={errors.amount ? "Amount is required" : ""}
+            helperText={errors.amount ? errors.amount.message : ""}
           />
-          <DialogActions>
-            <Button type="submit">Add</Button>
-            <Button onClick={handleClose}>Cancel</Button>
+
+          <DialogActions sx={{ pt: 2 }}>
+            <Button variant="contained" type="submit" sx={{ px: 4 }}>
+              Add
+            </Button>
+            <Button variant="contained" color="error" onClick={handleClose}>
+              Cancel
+            </Button>
           </DialogActions>
         </Box>
       </DialogContent>
