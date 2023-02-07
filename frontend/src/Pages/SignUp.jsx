@@ -45,6 +45,7 @@ const SignUp = () => {
         throw new Error("Please re-enter password! Passwords doesn't match");
       else setError("");
       data.image = image;
+      delete data.confirmPassword;
 
       dispatch(
         apiCall({
@@ -95,14 +96,21 @@ const SignUp = () => {
             id="username"
             fullWidth
             placeholder="Enter User Name"
-            {...register("username", { required: true })}
+            {...register("username", {
+              required: { value: true, message: "User Name is required" },
+              minLength: {
+                value: 4,
+                message: "Username should be atleast 4 characters long",
+              },
+            })}
             error={Boolean(errors.username)}
-            helperText={errors.username ? "User Name is required" : ""}
+            helperText={errors.username ? errors.username.message : ""}
           />
           <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
             Email Id
           </Typography>
           <TextField
+            type="email"
             sx={{ mb: 2 }}
             id="email"
             fullWidth
@@ -120,9 +128,23 @@ const SignUp = () => {
             placeholder="Enter Password"
             type="password"
             sx={{ mb: 2 }}
-            {...register("password", { required: true })}
+            {...register("password", {
+              required: {
+                value: true,
+                message: "Password is required",
+              },
+              minLength: {
+                value: 8,
+                message: "Password should be minimum of 8 characters",
+              },
+              pattern: {
+                value: /^(?=.*\d)(?=.*[a-z])(?=.*[\W]).{8,20}$/,
+                message:
+                  "Password should contain lowercase and uppercase letters, numbers and special characters",
+              },
+            })}
             error={Boolean(errors.password)}
-            helperText={errors.password ? "Password is required" : ""}
+            helperText={errors.password ? errors.password.message : ""}
           />
           <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
             Confirm Password
@@ -133,9 +155,25 @@ const SignUp = () => {
             sx={{ mb: 2 }}
             placeholder="Enter Confrim Password"
             type="password"
-            {...register("confirmPassword", { required: true })}
+            {...register("confirmPassword", {
+              required: {
+                value: true,
+                message: "Confirm Password is required",
+              },
+              minLength: {
+                value: 8,
+                message: "Password should be minimum of 8 characters",
+              },
+              pattern: {
+                value: /^(?=.*\d)(?=.*[a-z])(?=.*[\W]).{8,20}$/,
+                message:
+                  "Password should contain lowercase and uppercase letters, numbers and special characters",
+              },
+            })}
             error={Boolean(errors.confirmPassword)}
-            helperText={errors.confirmPassword ? "Password is required" : ""}
+            helperText={
+              errors.confirmPassword ? errors.confirmPassword.message : ""
+            }
           />
           {error !== "" && (
             <Typography
@@ -149,17 +187,23 @@ const SignUp = () => {
           <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
             Profile Picture
           </Typography>
-          <Input
-            name="profileImage"
-            inputProps={{ accept: "image/*" }}
-            id="profileImage"
-            type="file"
-            onChange={(event) => {
-              fileToDataUri(event.target.files[0]).then((dataUri) =>
-                setImage(dataUri)
-              );
-            }}
-          />
+          <label htmlFor="profileImage">
+            <Input
+              sx={{ display: "none" }}
+              name="profileImage"
+              inputProps={{ accept: "image/*" }}
+              id="profileImage"
+              type="file"
+              onChange={(event) => {
+                fileToDataUri(event.target.files[0]).then((dataUri) =>
+                  setImage(dataUri)
+                );
+              }}
+            />
+            <Button variant="contained" component="span">
+              Upload profile image
+            </Button>
+          </label>
           <Button
             variant="contained"
             fullWidth

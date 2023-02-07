@@ -95,6 +95,10 @@ const updateUser = async (req, res) => {
           }
         );
     }
+    if (req.body.password) {
+      const salt = await bcrypt.genSalt(10);
+      req.body.password = await bcrypt.hash(password, salt);
+    }
     const updatedUser = await User.findByIdAndUpdate(req.user._id, req.body, {
       new: true,
     }).select("-password -_id");

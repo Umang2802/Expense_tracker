@@ -18,7 +18,7 @@ import { logout } from "../redux/slices/userSlice";
 const sidebarItems = [
   { name: "Dashboard", link: "/" },
   { name: "Transactions", link: "/transactions" },
-  { name: "Login", link: "/login" },
+  { name: "Edit Profile", link: "/editprofile" },
 ];
 
 function Sidebar({ drawerWidth }) {
@@ -66,44 +66,28 @@ function Sidebar({ drawerWidth }) {
         </Button>
         <Divider />
         <List>
-          {sidebarItems.map((item, index) =>
-            item.name === "Login" ? (
-              user.loggedIn ? (
-                <ListItem key={item.name} disablePadding>
-                  <ListItemButton>
-                    <Link
-                      to={item.link}
-                      style={{ textDecoration: "none", color: "black" }}
-                    >
-                      <ListItemText primary={item.name} />
-                    </Link>
-                  </ListItemButton>
-                </ListItem>
-              ) : (
-                <ListItem key="Logout" disablePadding>
-                  <ListItemButton
-                    onClick={() => {
-                      dispatch(logout());
-                      navigate("/login");
-                    }}
-                  >
-                    <ListItemText primary="Logout" />
-                  </ListItemButton>
-                </ListItem>
-              )
-            ) : (
-              <ListItem key={item.name} disablePadding>
-                <ListItemButton>
-                  <Link
-                    to={item.link}
-                    style={{ textDecoration: "none", color: "black" }}
-                  >
-                    <ListItemText primary={item.name} />
-                  </Link>
-                </ListItemButton>
-              </ListItem>
-            )
-          )}
+          {sidebarItems.map((item, index) => (
+            <ListItem key={item.name} disablePadding>
+              <ListItemButton>
+                <Link
+                  to={item.link}
+                  style={{ textDecoration: "none", color: "black" }}
+                >
+                  <ListItemText primary={item.name} />
+                </Link>
+              </ListItemButton>
+            </ListItem>
+          ))}
+          <ListItem key="Logout" disablePadding>
+            <ListItemButton
+              onClick={() => {
+                dispatch(logout());
+                navigate("/login");
+              }}
+            >
+              <ListItemText primary="Logout" />
+            </ListItemButton>
+          </ListItem>
         </List>
         <Divider />
       </Box>

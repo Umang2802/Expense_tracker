@@ -23,6 +23,9 @@ import { useNavigate } from "react-router-dom";
 import { add_transaction } from "../redux/slices/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { ADD_TRANSACTION_URL } from "../services/endpoints";
+import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 export default function FormDialog({
   openTransactionModal,
@@ -110,7 +113,7 @@ export default function FormDialog({
             <Grid container item xs={12} md={5}>
               <Grid item xs={12} md={12}>
                 <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
-                  Choose CashFlow
+                  Select CashFlow
                 </Typography>
               </Grid>
               <Grid item xs={12} md={12}>
@@ -147,7 +150,7 @@ export default function FormDialog({
             <Grid container item xs={12} md={5}>
               <Grid item xs={12} md={12}>
                 <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
-                  Choose Category
+                  Select Category
                 </Typography>
               </Grid>
               <Grid item xs={12} md={12}>
@@ -194,7 +197,7 @@ export default function FormDialog({
           </Grid>
 
           <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
-            Choose Account
+            Select Account
           </Typography>
           <FormControl error={Boolean(errors.account)} sx={{ mb: 2 }}>
             <Controller
@@ -220,6 +223,24 @@ export default function FormDialog({
               {errors.account ? "Account is required" : ""}
             </FormHelperText>
           </FormControl>
+
+          <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
+            Select date
+          </Typography>
+          <Controller
+            name="date"
+            control={control}
+            render={({ field }) => (
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <MobileDatePicker
+                  inputFormat="DD/MM/YYYY"
+                  {...register("date")}
+                  renderInput={(params) => <TextField {...params} />}
+                  {...field}
+                />
+              </LocalizationProvider>
+            )}
+          />
           <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
             Amount
           </Typography>

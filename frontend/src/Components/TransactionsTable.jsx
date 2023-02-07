@@ -65,7 +65,7 @@ const TransactionsTable = ({ noOfTransactions, title }) => {
             <TableBody>
               {transactions?.map(
                 (transaction, index) =>
-                  index < noOfTransactions && (
+                  (index < noOfTransactions) && (
                     <StyledTableRow key={index}>
                       <StyledTableCell component="th" scope="row">
                         {formatDate(transaction.date)}

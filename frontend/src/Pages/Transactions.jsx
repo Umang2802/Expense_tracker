@@ -1,10 +1,8 @@
-import React, { useContext } from "react";
+import { useSelector } from "react-redux";
 import TransactionsTable from "../Components/TransactionsTable";
-import { ContextProvider } from "../Context";
 
 const Transactions = () => {
-  const { state } = useContext(ContextProvider);
-  const { transactions } = state;
+  const transactions = useSelector((state) => state.user.transactions);
   return (
     <TransactionsTable
       noOfTransactions={transactions.length}

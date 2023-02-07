@@ -98,6 +98,7 @@ const Login = () => {
             sx={{ mb: 2 }}
             id="email"
             fullWidth
+            type="email"
             placeholder="Enter Email Id"
             {...register("email", { required: true })}
             error={Boolean(errors.email)}

@@ -11,6 +11,7 @@ import SignUp from "./Pages/SignUp";
 import theme from "./Typography";
 import CustomizedSnackbars from "./Components/Snackbar";
 import Loader from "./Components/Loader";
+import EditProfile from "./Pages/EditProfile";
 
 const drawerWidth = 240;
 
@@ -42,6 +43,18 @@ function App() {
                       <Sidebar drawerWidth={drawerWidth} />
                       <Container drawerWidth={drawerWidth}>
                         <Transactions />
+                      </Container>
+                    </>
+                  }
+                />
+                <Route
+                  path="/editprofile"
+                  element={
+                    <>
+                      <CssBaseline />
+                      <Sidebar drawerWidth={drawerWidth} />
+                      <Container drawerWidth={drawerWidth}>
+                        <EditProfile />
                       </Container>
                     </>
                   }
