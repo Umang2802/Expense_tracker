@@ -68,7 +68,7 @@ const TransactionsTable = ({ noOfTransactions, title }) => {
                   index < noOfTransactions && (
                     <StyledTableRow key={index}>
                       <StyledTableCell component="th" scope="row">
-                        {formatDate(transaction.updatedAt)}
+                        {formatDate(transaction.date)}
                       </StyledTableCell>
                       <StyledTableCell>{transaction.category}</StyledTableCell>
                       <StyledTableCell>

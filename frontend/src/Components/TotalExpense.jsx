@@ -13,8 +13,8 @@ const findTotal = (Transactions, startDate, endDate) => {
   Transactions.filter((e) => e.cashFlow !== INCOME)
     .filter(
       (e) =>
-        new Date(new Date(e.updatedAt).toDateString()) >= startDate &&
-        new Date(new Date(e.updatedAt).toDateString()) <= endDate
+        new Date(new Date(e.date).toDateString()) >= startDate &&
+        new Date(new Date(e.date).toDateString()) <= endDate
     )
     .forEach((e) => {
       cat[`${e.category}`] += parseInt(e.amount);

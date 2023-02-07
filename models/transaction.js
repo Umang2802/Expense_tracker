@@ -12,6 +12,11 @@ const transactionSchema = new Schema(
       ref: "Account",
       required: true,
     },
+    date: {
+      type: Date,
+      default: Date.now(),
+      required: true,
+    },
     user: {
       type: mongoose.SchemaTypes.ObjectId,
       ref: "User",

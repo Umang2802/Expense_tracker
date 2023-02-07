@@ -118,10 +118,12 @@ export default function FormDialog({
                   <Controller
                     render={({ field }) => (
                       <Select
-                        {...field}
                         displayEmpty
                         {...register("cashFlow", { required: true })}
-                        onChange={(e) => setCF(e.target.value)}
+                        onChange={(e) => {
+                          setCF(e.target.value);
+                          field.onChange(e);
+                        }}
                         defaultValue=""
                         // inputProps={{ style: "width: 100%" }}
                       >

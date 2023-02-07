@@ -68,7 +68,7 @@ const addTransaction = async (req, res) => {
 
       let newTransaction = await Transaction.findById(transaction._id)
         .session(session)
-        .select("-user -createdAt");
+        .select("-user -createdAt -updatedAt");
       newTransaction.account = await Account.findById(newTransaction.account)
         .select("name")
         .session(session);
