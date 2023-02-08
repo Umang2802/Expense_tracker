@@ -7,30 +7,15 @@ import NewTransactionModal from "../Components/NewTransactionModal";
 import RecentTransactions from "../Components/RecentTransactions";
 import AccountCards from "../Components/AccountCards";
 import AddButton from "../Components/AddButton";
-import { GET_HOME_DATA_URL } from "../services/endpoints";
-import { useDispatch, useSelector } from "react-redux";
-import { apiCall } from "../redux/createAsyncThunk";
-import { home } from "../redux/slices/userSlice";
+import { useSelector } from "react-redux";
 import { BALANCE, EXPENSE, INCOME, TRANSACTION } from "../data/constants";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [open, setOpen] = useState(false);
   const [openTransactionModal, setOpenTransactionModal] = useState(false);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const state = useSelector((state) => state);
-
-  useEffect(() => {
-    dispatch(
-      apiCall({
-        url: GET_HOME_DATA_URL,
-        method: "GET",
-        name: home,
-        token: state.user.token,
-      })
-    );
-  }, [state.user.token, dispatch]);
 
   useEffect(() => {
     if (state.response.responseStates === "error") {

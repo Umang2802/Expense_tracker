@@ -47,6 +47,7 @@ export const userSlice = createSlice({
     add_transaction: (state, action) => {
       state.transactions = [...state.transactions, action.payload.transaction];
     },
+    delete_transaction: (state) => {},
   },
 });
 
@@ -59,6 +60,7 @@ export const {
   user_update,
   add_account,
   add_transaction,
+  delete_transaction,
 } = userSlice.actions;
 
 export default userSlice.reducer;

@@ -11,11 +11,11 @@ import {
 
 import { useForm } from "react-hook-form";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { SIGNUP_URL } from "../services/endpoints";
+import { GET_HOME_DATA_URL, SIGNUP_URL } from "../services/endpoints";
 import { apiCall } from "../redux/createAsyncThunk";
-import { user_register } from "../redux/slices/userSlice";
+import { home, user_register } from "../redux/slices/userSlice";
 
 const fileToDataUri = (file) =>
   new Promise((resolve, reject) => {
@@ -27,7 +27,7 @@ const fileToDataUri = (file) =>
   });
 
 const SignUp = () => {
-  const [error, setError] = useState("");
+  const [err, setErr] = useState("");
   const [image, setImage] = useState("");
   const {
     register,
@@ -36,18 +36,19 @@ const SignUp = () => {
   } = useForm();
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log(data);
     console.log(image);
     try {
       if (data.confirmPassword !== data.password)
         throw new Error("Please re-enter password! Passwords doesn't match");
-      else setError("");
+      else setErr("");
       data.image = image;
       delete data.confirmPassword;
 
-      dispatch(
+      const signUp = await dispatch(
         apiCall({
           payload: data,
           url: SIGNUP_URL,
@@ -55,8 +56,33 @@ const SignUp = () => {
           name: user_register,
         })
       );
+      console.log(signUp);
+
+      if (signUp.meta.requestStatus === "fulfilled") {
+        console.log("Dispatch was successful");
+        const homeRes = await dispatch(
+          apiCall({
+            url: GET_HOME_DATA_URL,
+            method: "GET",
+            name: home,
+            token: signUp.payload.token,
+          })
+        );
+        console.log(homeRes);
+        if (homeRes.meta.requestStatus === "fulfilled") {
+          console.log("Dispatch was successful");
+          navigate("/");
+        } else if (homeRes.meta.requestStatus === "rejected") {
+          console.log("Home Dispatch failed");
+        }
+      } else if (signUp.meta.requestStatus === "rejected") {
+        console.log("Login Dispatch failed");
+      }
     } catch (error) {
-      setError(error.message);
+      console.log(error);
+      if (err) {
+        setErr(error.message);
+      }
     }
   };
 
@@ -175,13 +201,13 @@ const SignUp = () => {
               errors.confirmPassword ? errors.confirmPassword.message : ""
             }
           />
-          {error !== "" && (
+          {err !== "" && (
             <Typography
               sx={{ float: "left", mb: 1 }}
               color="red"
               fontWeight={500}
             >
-              {error}
+              {err}
             </Typography>
           )}
           <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>

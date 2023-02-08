@@ -12,8 +12,8 @@ import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { apiCall } from "../redux/createAsyncThunk";
-import { LOGIN_URL } from "../services/endpoints";
-import { login } from "../redux/slices/userSlice";
+import { GET_HOME_DATA_URL, LOGIN_URL } from "../services/endpoints";
+import { home, login } from "../redux/slices/userSlice";
 
 const Login = () => {
   const {
@@ -29,7 +29,7 @@ const Login = () => {
   const onSubmit = async (data) => {
     console.log(data);
     try {
-      const res = await dispatch(
+      const loginRes = await dispatch(
         apiCall({
           payload: data,
           url: LOGIN_URL,
@@ -38,14 +38,27 @@ const Login = () => {
         })
       );
 
-      console.log(res);
+      console.log(loginRes);
 
-      if (res.meta.requestStatus === "fulfilled") {
+      if (loginRes.meta.requestStatus === "fulfilled") {
         console.log("Dispatch was successful");
-        navigate("/");
-      } else if (res.meta.requestStatus === "rejected") {
-        console.log("Dispatch failed");
-        // navigate("/login");
+        const homeRes = await dispatch(
+          apiCall({
+            url: GET_HOME_DATA_URL,
+            method: "GET",
+            name: home,
+            token: loginRes.payload.token,
+          })
+        );
+        console.log(homeRes);
+        if (homeRes.meta.requestStatus === "fulfilled") {
+          console.log("Dispatch was successful");
+          navigate("/");
+        } else if (homeRes.meta.requestStatus === "rejected") {
+          console.log("Home Dispatch failed");
+        }
+      } else if (loginRes.meta.requestStatus === "rejected") {
+        console.log("Login Dispatch failed");
       }
     } catch (rejectedValueOrSerializedError) {
       console.log(rejectedValueOrSerializedError);

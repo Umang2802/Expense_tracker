@@ -1,4 +1,4 @@
-import { Divider, Paper, Typography } from "@mui/material";
+import { Button, Divider, Paper, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import * as React from "react";
 import { styled } from "@mui/material/styles";
@@ -10,6 +10,9 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { INCOME } from "../data/constants";
 import { useSelector } from "react-redux";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteTransactionModal from "./DeleteTransactionModal";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -43,6 +46,8 @@ function formatDate(dateString) {
 
 const TransactionsTable = ({ noOfTransactions, title }) => {
   const transactions = useSelector((state) => state.user.transactions);
+  const [open, setOpen] = React.useState(false);
+  const [transactionId, setTransactionId] = React.useState();
 
   return (
     <Paper elevation={2} sx={{ mt: 2 }}>
@@ -59,13 +64,21 @@ const TransactionsTable = ({ noOfTransactions, title }) => {
                 <StyledTableCell>Category</StyledTableCell>
                 <StyledTableCell>Account</StyledTableCell>
                 <StyledTableCell>Description</StyledTableCell>
-                <StyledTableCell align="right">Amount</StyledTableCell>
+                {title === "All Transactions" ? (
+                  <>
+                    <StyledTableCell>Amount</StyledTableCell>
+                    <StyledTableCell align="right">Edit</StyledTableCell>
+                    <StyledTableCell align="right">Delete</StyledTableCell>
+                  </>
+                ) : (
+                  <StyledTableCell align="right">Amount</StyledTableCell>
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
               {transactions?.map(
                 (transaction, index) =>
-                  (index < noOfTransactions) && (
+                  index < noOfTransactions && (
                     <StyledTableRow key={index}>
                       <StyledTableCell component="th" scope="row">
                         {formatDate(transaction.date)}
@@ -77,7 +90,41 @@ const TransactionsTable = ({ noOfTransactions, title }) => {
                       <StyledTableCell>
                         {transaction.description}
                       </StyledTableCell>
-                      {transaction.cashFlow === INCOME ? (
+
+                      {title === "All Transactions" ? (
+                        <>
+                          {transaction.cashFlow === INCOME ? (
+                            <StyledTableCell sx={{ color: "green" }}>
+                              + ${transaction.amount}
+                            </StyledTableCell>
+                          ) : (
+                            <StyledTableCell sx={{ color: "red" }}>
+                              - ${transaction.amount}
+                            </StyledTableCell>
+                          )}
+                          <StyledTableCell align="right">
+                            <Button
+                              sx={{ minWidth: 0, p: 0 }}
+                              onClick={() => {
+                                // handleEdit(transaction._id);
+                              }}
+                            >
+                              <EditIcon />
+                            </Button>
+                          </StyledTableCell>
+                          <StyledTableCell align="right">
+                            <Button
+                              sx={{ minWidth: 0 }}
+                              onClick={() => {
+                                setOpen(true);
+                                setTransactionId(transaction._id);
+                              }}
+                            >
+                              <DeleteIcon sx={{ color: "red" }} />
+                            </Button>
+                          </StyledTableCell>
+                        </>
+                      ) : transaction.cashFlow === INCOME ? (
                         <StyledTableCell align="right" sx={{ color: "green" }}>
                           + ${transaction.amount}
                         </StyledTableCell>
@@ -93,6 +140,11 @@ const TransactionsTable = ({ noOfTransactions, title }) => {
           </Table>
         </TableContainer>
       </Box>
+      <DeleteTransactionModal
+        open={open}
+        setOpen={setOpen}
+        transaction_id={transactionId}
+      />
     </Paper>
   );
 };
