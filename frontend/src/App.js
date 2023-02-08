@@ -7,7 +7,7 @@ import { Box, CssBaseline, ThemeProvider } from "@mui/material";
 import Sidebar from "./Components/Sidebar";
 import Login from "./Pages/Login";
 import Container from "./Components/Container";
-import SignUp from "./Pages/SignUp";
+import Signup from "./Pages/Signup";
 import theme from "./Typography";
 import CustomizedSnackbars from "./Components/Snackbar";
 import Loader from "./Components/Loader";
@@ -60,7 +60,7 @@ function App() {
                   }
                 />
                 <Route path="/login" element={<Login />} />
-                <Route path="/signUp" element={<SignUp />} />
+                <Route path="/signup" element={<Signup />} />
                 <Route
                   path="*"
                   element={<div>Error 404: Page not Found</div>}
