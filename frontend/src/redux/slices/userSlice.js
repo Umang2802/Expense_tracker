@@ -37,6 +37,7 @@ export const userSlice = createSlice({
       state.user.loggedIn = true;
     },
     logout: (state) => (state = initialState),
+    user_email: (state) => {},
     user_update: (state, action) => {
       console.log(action);
       state.user.loggedIn = true;
@@ -56,6 +57,7 @@ export const {
   user_register,
   login,
   logout,
+  user_email,
   user_info,
   user_update,
   add_account,

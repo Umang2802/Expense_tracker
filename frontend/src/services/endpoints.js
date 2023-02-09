@@ -2,6 +2,7 @@ export const baseURL = "https://expensetracker.cyclic.app";
 
 //Auth URLs
 export const GET_USER_URL = "/user/";
+export const CHECK_USER_EMAIL_URL = "/user/email";
 export const LOGIN_URL = "/user/login";
 export const SIGNUP_URL = "/user/register";
 export const UPDATE_USER_URL = "/user/update";

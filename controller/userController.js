@@ -3,6 +3,21 @@ const bcrypt = require("bcrypt");
 const createJwtToken = require("../utils/createJwtToken");
 const { cloudinary } = require("../config/cloudinary");
 
+const check_user_email = async (res, req) => {
+  try {
+    const { email } = req.body;
+    user = await User.findOne({ email });
+    if (user) {
+      res.status(400).json({ message: "Email already exists" });
+      return;
+    }
+    res.status(200).send();
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
 const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -120,4 +135,4 @@ const info = async (req, res) => {
   }
 };
 
-module.exports = { login, register, info, updateUser };
+module.exports = { login, register, info, updateUser, check_user_email };
