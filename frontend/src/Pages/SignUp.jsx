@@ -217,7 +217,6 @@ export default function Signup() {
 
   //User
   const onSubmit = async (data) => {
-    console.log(data);
     try {
       if (data.confirmPassword !== data.password)
         throw new Error("Please re-enter password! Passwords doesn't match");
