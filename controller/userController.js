@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const createJwtToken = require("../utils/createJwtToken");
 const { cloudinary } = require("../config/cloudinary");
 
-const check_user_email = async (res, req) => {
+const check_user_email = async (req, res) => {
   try {
     const { email } = req.body;
     user = await User.findOne({ email });

@@ -235,12 +235,12 @@ export default function Signup() {
       console.log(emailCheckRes);
 
       if (emailCheckRes.meta.requestStatus === "fulfilled") {
-        console.log("Dispatch was successful");
+        console.log("Check Email Dispatch was successful");
         console.log(data);
         setUserdata(data);
         handleNext();
       } else if (emailCheckRes.meta.requestStatus === "rejected") {
-        console.log("Login Dispatch failed");
+        console.log("Check Email Dispatch failed");
         resetField({ ...data });
       }
     } catch (error) {
