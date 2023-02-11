@@ -51,24 +51,30 @@ const TotalExpense = () => {
         <b>Total Expenses</b>
         <Calender setDate={setDate} />
       </Typography>
-      <Grid container justifyContent="space-evenly">
-        <Grid item xs={7}>
-          <DoughnutChart
-            style={{ height: "300px", width: "100%" }}
-            date={date}
-            categories={categories}
-            totalAmount={totalAmount}
-          />
+      {transactions.length === 0 ? (
+        <Typography align="center" variant="h6" sx={{ p: 5 }}>
+          No transaction data
+        </Typography>
+      ) : (
+        <Grid container justifyContent="space-evenly">
+          <Grid item xs={7}>
+            <DoughnutChart
+              style={{ height: "300px", width: "100%" }}
+              date={date}
+              categories={categories}
+              totalAmount={totalAmount}
+            />
+          </Grid>
+          <Grid item xs={3}>
+            <BasicTable
+              date={date}
+              categories={categories}
+              totalAmount={totalAmount}
+            />
+          </Grid>
+          <Grid item xs={1}></Grid>
         </Grid>
-        <Grid item xs={3}>
-          <BasicTable
-            date={date}
-            categories={categories}
-            totalAmount={totalAmount}
-          />
-        </Grid>
-        <Grid item xs={1}></Grid>
-      </Grid>
+      )}
     </Paper>
   );
 };

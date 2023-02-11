@@ -52,7 +52,6 @@ export default function TransactionModal({
     formState: { errors },
     control,
     reset,
-    setValue,
   } = useForm();
 
   let modalData = {};

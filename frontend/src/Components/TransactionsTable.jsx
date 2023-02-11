@@ -12,9 +12,9 @@ import { INCOME } from "../data/constants";
 import { useSelector } from "react-redux";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import DeleteTransactionModal from "./DeleteTransactionModal";
 import TransactionModal from "./Transaction/TransactionModal";
 import { useState } from "react";
+import DeleteModal from "./DeleteModal";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -57,6 +57,7 @@ const TransactionsTable = ({
   const [transactionId, setTransactionId] = useState();
   const [transaction, setTransaction] = useState({});
   const [modalName, setModalName] = useState("");
+  const [deleteModalName, setDeleteModalName] = useState("");
 
   return (
     <Paper elevation={2} sx={{ mt: 2 }}>
@@ -64,7 +65,11 @@ const TransactionsTable = ({
         <b>{title}</b>
       </Typography>
       <Divider />
-      <Box>
+      {transactions.length === 0 ? (
+        <Typography align="center" variant="h6" sx={{ p: 5 }}>
+          No transaction data
+        </Typography>
+      ) : (
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
             <TableHead>
@@ -127,8 +132,9 @@ const TransactionsTable = ({
                             <Button
                               sx={{ minWidth: 0 }}
                               onClick={() => {
-                                setOpen(true);
                                 setTransactionId(transaction._id);
+                                setDeleteModalName("Delete Transaction");
+                                setOpen(true);
                               }}
                             >
                               <DeleteIcon sx={{ color: "red" }} />
@@ -150,17 +156,18 @@ const TransactionsTable = ({
             </TableBody>
           </Table>
         </TableContainer>
-      </Box>
+      )}
       <TransactionModal
         openTransactionModal={openTransactionModal}
         setOpenTransactionModal={setOpenTransactionModal}
         modalName={modalName}
         transaction={transaction}
       />
-      <DeleteTransactionModal
+      <DeleteModal
         open={open}
         setOpen={setOpen}
-        transaction_id={transactionId}
+        id={transactionId}
+        modalName={deleteModalName}
       />
     </Paper>
   );

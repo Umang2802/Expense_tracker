@@ -5,16 +5,15 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Divider } from "@mui/material";
-import { DELETE_TRANSACTION_URL } from "../services/endpoints";
+import {
+  DELETE_ACCOUNT_URL,
+  DELETE_TRANSACTION_URL,
+} from "../services/endpoints";
 import { apiCall } from "../redux/createAsyncThunk";
 import { useDispatch, useSelector } from "react-redux";
 import { home } from "../redux/slices/userSlice";
 
-export default function DeleteTransactionModal({
-  transaction_id,
-  open,
-  setOpen,
-}) {
+export default function DeleteModal({ id, open, setOpen, modalName }) {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.user.token);
 
@@ -22,7 +21,10 @@ export default function DeleteTransactionModal({
     try {
       const res = await dispatch(
         apiCall({
-          url: DELETE_TRANSACTION_URL + transaction_id,
+          url:
+            modalName === "Delete Transaction"
+              ? DELETE_TRANSACTION_URL + id
+              : DELETE_ACCOUNT_URL + id,
           method: "DELETE",
           name: home,
           token: token,
@@ -53,11 +55,9 @@ export default function DeleteTransactionModal({
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">Delete Transaction</DialogTitle>
+      <DialogTitle id="alert-dialog-title">{modalName}</DialogTitle>
       <Divider />
-      <DialogContent>
-        Are you sure you want to delete the transaction?
-      </DialogContent>
+      <DialogContent>Are you sure you want to delete?</DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>No</Button>
         <Button onClick={handleDelete} autoFocus>
