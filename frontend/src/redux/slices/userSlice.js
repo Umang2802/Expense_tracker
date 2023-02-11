@@ -28,12 +28,12 @@ export const userSlice = createSlice({
     },
     user_register: (state, action) => {
       console.log(action);
-      state.token = action.payload.token;
+      state = action.payload;
       state.user.loggedIn = true;
     },
     login: (state, action) => {
       console.log(action);
-      state.token = action.payload.token;
+      state = action.payload;
       state.user.loggedIn = true;
     },
     logout: (state) => (state = initialState),

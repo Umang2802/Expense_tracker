@@ -37,7 +37,7 @@ const login = async (req, res, next) => {
     }
 
     const token = await createJwtToken(user);
-    const newUser = await User.findById(user._id);
+    const newUser = await User.findById(user._id).select("-password -_id");
     req.token = token;
     req.user = newUser;
     next();

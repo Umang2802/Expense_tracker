@@ -43,6 +43,7 @@ import {
   user_email,
   user_register,
 } from "../redux/slices/userSlice";
+import { useEffect } from "react";
 
 const steps = [
   "Add details",
@@ -246,14 +247,16 @@ export default function Signup() {
     }
   };
 
+  const handleImageClick = () => {
+    if (image) setUserdata({ ...userData, image: image });
+
+    handleNext();
+  };
+
   const onAccountSubmit = async (data) => {
     console.log(data);
+    console.log(userData);
     try {
-      if (image) {
-        setUserdata({ ...userData, image: image });
-      }
-      console.log(userData);
-
       const signUp = await dispatch(
         apiCall({
           payload: { user: userData, account: data },
@@ -516,7 +519,7 @@ export default function Signup() {
                         variant="contained"
                         fullWidth
                         sx={{ mt: 4 }}
-                        onClick={handleNext}
+                        onClick={handleImageClick}
                       >
                         Proceed
                       </Button>
