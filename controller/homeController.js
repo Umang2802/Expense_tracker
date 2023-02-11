@@ -4,7 +4,6 @@ const Transaction = require("../models/transaction");
 const getHomeData = async (req, res) => {
   try {
     const user = req.user;
-
     const accounts = await Account.find({
       user: user.id,
     }).select("-user");
@@ -17,7 +16,7 @@ const getHomeData = async (req, res) => {
 
     if (req.token) {
       res.status(200).json({
-        token,
+        token: req.token,
         accounts,
         transactions,
         user,

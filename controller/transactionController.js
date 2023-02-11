@@ -64,16 +64,12 @@ const addTransaction = async (req, res, next) => {
       await Account.findByIdAndUpdate(checkAccount._id, checkAccount).session(
         session
       );
-      await User.findByIdAndUpdate(user._id, user).session(session);
-
-      let newTransaction = await Transaction.findById(transaction._id)
+      const updatedUser = await User.findByIdAndUpdate(user._id, user)
         .session(session)
-        .select("-user -createdAt -updatedAt");
-      newTransaction.account = await Account.findById(newTransaction.account)
-        .select("name")
-        .session(session);
+        .select("-password -_id");
 
       req.message = "Added transaction successfully";
+      req.user = updatedUser;
     });
     session.endSession();
     next();
@@ -175,9 +171,12 @@ const updateTransaction = async (req, res, next) => {
         session
       );
 
-      await User.findByIdAndUpdate(user._id, user).session(session);
+      const updatedUser = await User.findByIdAndUpdate(user._id, user)
+        .session(session)
+        .select("-password -_id");
 
       req.message = "Updated transaction successfully";
+      req.user = updatedUser;
     });
     session.endSession();
     next();
@@ -219,12 +218,15 @@ const deleteTransaction = async (req, res, next) => {
         checkAccount.amount += checkTransaction.amount;
       }
 
-      await User.findByIdAndUpdate(user._id, user).session(session);
+      const updatedUser = await User.findByIdAndUpdate(user._id, user)
+        .session(session)
+        .select("-password -_id");
       await Account.findByIdAndUpdate(checkAccount._id, checkAccount).session(
         session
       );
       await Transaction.findByIdAndDelete(transaction_id).session(session);
       req.message = "Successfully deleted transaction";
+      req.user = updatedUser;
     });
     session.endSession();
     next();

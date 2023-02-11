@@ -42,12 +42,12 @@ const addAccount = async (req, res, next) => {
       await account.save({ session });
 
       user.inflow += amount;
-      await User.findByIdAndUpdate(user._id, user).session(session);
-      const newAccount = await Account.findById(account._id)
+      const updatedUser = await User.findByIdAndUpdate(user._id, user)
         .session(session)
-        .select("-user -_id");
+        .select("-password -_id");
 
       req.message = "Added account successfully";
+      req.user = updatedUser;
     });
     session.endSession();
     next();
@@ -79,19 +79,18 @@ const updateAccount = async (req, res, next) => {
         return;
       }
 
-      const result = await Account.findByIdAndUpdate(account_id, req.body, {
-        new: true,
-      })
-        .session(session)
-        .select("-user -_id");
+      await Account.findByIdAndUpdate(account_id, req.body).session(session);
 
       let newInflow = user.inflow;
       newInflow -= checkAccount.amount;
       newInflow += amount;
-      await User.findByIdAndUpdate(user._id, { inflow: newInflow }).session(
-        session
-      );
+      const updatedUser = await User.findByIdAndUpdate(user._id, {
+        inflow: newInflow,
+      })
+        .session(session)
+        .select("-password -_id");
       req.message = "Account updated successfully";
+      req.user = updatedUser;
     });
     session.endSession();
     next();
@@ -129,10 +128,13 @@ const deleteAccount = async (req, res, next) => {
       });
       user.inflow -= Math.abs(checkAccount.amount - totalTransactionInflow);
 
-      await User.findByIdAndUpdate(user._id, user).session(session);
+      await User.findByIdAndUpdate(user._id, user)
+        .session(session)
+        .select("-password -_id");
       await Transaction.deleteMany({ account: account_id }).session(session);
       await Account.findByIdAndDelete(account_id).session(session);
       req.message = "Account deleted successfully";
+      req.user = updatedUser;
     });
     session.endSession();
     next();

@@ -37,7 +37,9 @@ const login = async (req, res, next) => {
     }
 
     const token = await createJwtToken(user);
+    const newUser = await User.findById(user._id);
     req.token = token;
+    req.user = newUser;
     next();
   } catch (error) {
     console.error(error.message);
@@ -152,6 +154,7 @@ const updateUser = async (req, res, next) => {
       new: true,
     }).select("-password -_id");
     req.message = "Profile updated successfully";
+    req.user = updatedUser;
     next();
   } catch (error) {
     console.error(error.message);
