@@ -8,24 +8,14 @@ import Typography from "@mui/material/Typography";
 import {
   Avatar,
   Container,
-  FormControl,
-  FormHelperText,
   Grid,
   Input,
-  InputLabel,
-  MenuItem,
   Paper,
-  Select,
   TextField,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { LocalizationProvider, MobileDatePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { EXPENSE, INCOME } from "../data/constants";
-import Categories from "../data/Categories";
 import StepConnector, {
   stepConnectorClasses,
 } from "@mui/material/StepConnector";
@@ -33,12 +23,9 @@ import { styled } from "@mui/material/styles";
 import Check from "@mui/icons-material/Check";
 import PropTypes from "prop-types";
 import { apiCall } from "../redux/createAsyncThunk";
-import {
-  ADD_ACCOUNT_URL,
-  CHECK_USER_EMAIL_URL,
-  SIGNUP_URL,
-} from "../services/endpoints";
-import { user_email, user_register } from "../redux/slices/userSlice";
+import { CHECK_USER_EMAIL_URL, SIGNUP_URL } from "../services/endpoints";
+import { user_register } from "../redux/slices/userSlice";
+import { useForm } from "react-hook-form";
 
 const steps = ["Add details", "Profile image", "Add an account"];
 
@@ -130,7 +117,6 @@ export default function Signup() {
 
   const [err, setErr] = useState("");
   const [image, setImage] = useState("");
-  const [cF, setCF] = useState("");
   const {
     register,
     handleSubmit,
@@ -141,13 +127,6 @@ export default function Signup() {
     register: register1,
     handleSubmit: handleSubmit1,
     formState: { errors: errors1 },
-  } = useForm();
-
-  const {
-    register: register2,
-    handleSubmit: handleSubmit2,
-    formState: { errors: errors2 },
-    control,
   } = useForm();
 
   const [userData, setUserdata] = useState();
@@ -591,210 +570,6 @@ export default function Signup() {
                 </Grid>
               </Box>
             )}
-
-            {/* {activeStep === 3 && (
-              <Box
-                component="form"
-                sx={{ p: 3 }}
-                onSubmit={handleSubmit2(onTransactionSubmit)}
-              >
-                <Typography
-                  align="center"
-                  variant="h6"
-                  sx={{ mb: 2 }}
-                  fontWeight={500}
-                >
-                  Transaction details
-                </Typography>
-                <TextField
-                  label="Description"
-                  autoFocus
-                  sx={{ mb: 2 }}
-                  id="description"
-                  fullWidth
-                  {...register2("description", {
-                    required: "Description is required",
-                    pattern: {
-                      value: /^[A-Za-z0-9 ]+$/i,
-                      message: "Special characters are not allowed",
-                    },
-                  })}
-                  error={Boolean(errors2.description)}
-                  helperText={
-                    errors2.description ? errors2.description.message : ""
-                  }
-                />
-                <Grid container sx={{ mb: 2 }} spacing={2}>
-                  <Grid item xs={6}>
-                    <FormControl
-                      error={Boolean(errors2.cashFlow)}
-                      sx={{ width: "100%", textAlign: "start" }}
-                    >
-                      <InputLabel id="cashFlow">CashFlow</InputLabel>
-                      <Controller
-                        render={({ field }) => (
-                          <Select
-                            label="cashFlow"
-                            labelId="cashFlow"
-                            {...register2("cashFlow", { required: true })}
-                            onChange={(e) => {
-                              setCF(e.target.value);
-                              field.onChange(e);
-                            }}
-                            defaultValue=""
-                          >
-                            <MenuItem value="">None</MenuItem>
-                            <MenuItem value={INCOME}>{INCOME}</MenuItem>
-                            <MenuItem value={EXPENSE}>{EXPENSE}</MenuItem>
-                          </Select>
-                        )}
-                        control={control}
-                        name="cashFlow"
-                      />
-                      <FormHelperText>
-                        {errors2.cashFlow ? "CashFlow is required" : ""}
-                      </FormHelperText>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={6}>
-                    {cF === INCOME ? (
-                      <TextField
-                        label="Catergory"
-                        disabled
-                        sx={{ mb: 1 }}
-                        id="incomeCategory"
-                        fullWidth
-                        {...register2("category", { required: true })}
-                        value={INCOME}
-                      />
-                    ) : (
-                      <FormControl
-                        error={Boolean(errors2.category)}
-                        sx={{ width: "100%", textAlign: "start" }}
-                      >
-                        <InputLabel id="category">Category</InputLabel>
-                        <Controller
-                          render={({ field }) => (
-                            <Select
-                              label="category"
-                              labelId="category"
-                              {...field}
-                              {...register2("category", { required: true })}
-                            >
-                              <MenuItem value="">None</MenuItem>
-                              {Object.keys(Categories).map(
-                                (item, index) =>
-                                  item !== INCOME && (
-                                    <MenuItem key={index} value={item}>
-                                      {item}
-                                    </MenuItem>
-                                  )
-                              )}
-                            </Select>
-                          )}
-                          control={control}
-                          name="category"
-                          defaultValue=""
-                        />
-                        <FormHelperText>
-                          {errors2.category ? "Category is required" : ""}
-                        </FormHelperText>
-                      </FormControl>
-                    )}
-                  </Grid>
-                  <Grid item xs={6}>
-                    <FormControl
-                      error={Boolean(errors2.account)}
-                      sx={{ width: "100%", textAlign: "start" }}
-                    >
-                      <InputLabel id="account">Account</InputLabel>
-                      <Controller
-                        render={({ field }) => (
-                          <Select
-                            label="account"
-                            labelId="account"
-                            {...field}
-                            {...register2("account", { required: true })}
-                            defaultValue=""
-                          >
-                            <MenuItem value="">None</MenuItem>
-                            {accounts.map((item, index) => (
-                              <MenuItem key={index} value={item._id}>
-                                {item.name}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        )}
-                        control={control}
-                        name="account"
-                      />
-                      <FormHelperText>
-                        {errors2.account ? "Account is required" : ""}
-                      </FormHelperText>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Controller
-                      name="date"
-                      control={control}
-                      render={({ field }) => (
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <MobileDatePicker
-                            inputFormat="DD/MM/YYYY"
-                            {...register2("date")}
-                            renderInput={(params) => (
-                              <TextField {...params} label="Date" />
-                            )}
-                            {...field}
-                          />
-                        </LocalizationProvider>
-                      )}
-                    />
-                  </Grid>
-                </Grid>
-
-                <TextField
-                  label="Amount"
-                  id="amount"
-                  sx={{ mb: 1 }}
-                  type="number"
-                  inputProps={{ min: 0 }}
-                  fullWidth
-                  {...register2("amount", {
-                    required: "Amount is required",
-                    min: {
-                      value: 0,
-                      message: "Amount should be positive",
-                    },
-                  })}
-                  error={Boolean(errors2.amount)}
-                  helperText={errors2.amount ? errors2.amount.message : ""}
-                />
-                <Grid container direction="row" justifyContent="space-between">
-                  <Grid item xs={5}>
-                    <Button
-                      variant="contained"
-                      fullWidth
-                      disabled={activeStep === 0}
-                      sx={{ mt: 2, mb: 1 }}
-                      onClick={handleBack}
-                    >
-                      Back
-                    </Button>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Button
-                      variant="contained"
-                      fullWidth
-                      sx={{ mt: 2, mb: 1 }}
-                      type="submit"
-                    >
-                      Register
-                    </Button>
-                  </Grid>
-                </Grid>
-              </Box>
-            )} */}
           </>
         </Box>
       </Paper>

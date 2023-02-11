@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import {
@@ -11,9 +10,9 @@ import {
   FormControl,
   FormHelperText,
   Grid,
+  InputLabel,
   MenuItem,
   Select,
-  Typography,
 } from "@mui/material";
 import { INCOME, EXPENSE } from "../data/constants";
 import Categories from "../data/Categories";
@@ -25,6 +24,17 @@ import { ADD_TRANSACTION_URL } from "../services/endpoints";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
 
 export default function FormDialog({
   openTransactionModal,
@@ -77,20 +87,12 @@ export default function FormDialog({
       <Divider />
       <DialogContent>
         <Box
-          noValidate
           component="form"
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            m: "auto",
-            minWidth: 500,
-          }}
           onSubmit={handleSubmit(onSubmit)}
+          sx={{ width: "100%" }}
         >
-          <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
-            Description
-          </Typography>
           <TextField
+            label="Description"
             autoFocus
             sx={{ mb: 2 }}
             id="description"
@@ -105,103 +107,118 @@ export default function FormDialog({
             error={Boolean(errors.description)}
             helperText={errors.description ? errors.description.message : ""}
           />
-          <Grid container sx={{ mb: 2 }}>
-            <Grid container item xs={12} md={5}>
-              <Grid item xs={12} md={12}>
-                <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
-                  Select CashFlow
-                </Typography>
-              </Grid>
-              <Grid item xs={12} md={12}>
-                <FormControl error={Boolean(errors.cashFlow)}>
-                  <Controller
-                    render={({ field }) => (
-                      <Select
-                        displayEmpty
-                        {...register("cashFlow", { required: true })}
-                        onChange={(e) => {
-                          setCF(e.target.value);
-                          field.onChange(e);
-                        }}
-                        defaultValue=""
-                        // inputProps={{ style: "width: 100%" }}
-                      >
-                        <MenuItem value="">None</MenuItem>
-                        <MenuItem value={INCOME}>{INCOME}</MenuItem>
-                        <MenuItem value={EXPENSE}>{EXPENSE}</MenuItem>
-                      </Select>
-                    )}
-                    control={control}
-                    name="cashFlow"
-                  />
-                  <FormHelperText>
-                    {errors.cashFlow ? "CashFlow is required" : ""}
-                  </FormHelperText>
-                </FormControl>
-              </Grid>
-            </Grid>
-            <Grid container item xs={1} md={1} justifyContent="center">
-              <Divider orientation="vertical" />
-            </Grid>
-            <Grid container item xs={12} md={5}>
-              <Grid item xs={12} md={12}>
-                <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
-                  Select Category
-                </Typography>
-              </Grid>
-              <Grid item xs={12} md={12}>
-                {cF === INCOME ? (
-                  <TextField
-                    disabled
-                    sx={{ mb: 1 }}
-                    id="incomeCategory"
-                    fullWidth
-                    {...register("category", { required: true })}
-                    value={INCOME}
-                  />
-                ) : (
-                  <FormControl error={Boolean(errors.category)}>
-                    <Controller
-                      render={({ field }) => (
-                        <Select
-                          {...field}
-                          displayEmpty
-                          {...register("category", { required: true })}
-                        >
-                          <MenuItem value="">None</MenuItem>
-                          {Object.keys(Categories).map(
-                            (item, index) =>
-                              item !== INCOME && (
-                                <MenuItem key={index} value={item}>
-                                  {item}
-                                </MenuItem>
-                              )
-                          )}
-                        </Select>
-                      )}
-                      control={control}
-                      name="category"
+          <Grid container sx={{ mb: 2 }} spacing={2}>
+            <Grid item xs={6}>
+              <FormControl
+                error={Boolean(errors.cashFlow)}
+                sx={{ width: "100%", textAlign: "start" }}
+              >
+                <InputLabel id="cashFlow">CashFlow</InputLabel>
+                <Controller
+                  render={({ field }) => (
+                    <Select
+                      label="cashFlow"
+                      labelId="cashFlow"
+                      {...register("cashFlow", { required: true })}
+                      onChange={(e) => {
+                        setCF(e.target.value);
+                        field.onChange(e);
+                      }}
                       defaultValue=""
+                    >
+                      <MenuItem value="">None</MenuItem>
+                      <MenuItem value={INCOME}>{INCOME}</MenuItem>
+                      <MenuItem value={EXPENSE}>{EXPENSE}</MenuItem>
+                    </Select>
+                  )}
+                  control={control}
+                  name="cashFlow"
+                />
+                <FormHelperText>
+                  {errors.cashFlow ? "CashFlow is required" : ""}
+                </FormHelperText>
+              </FormControl>
+            </Grid>
+            <Grid item xs={6}>
+              <Controller
+                name="date"
+                control={control}
+                render={({ field }) => (
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <MobileDatePicker
+                      inputFormat="DD/MM/YYYY"
+                      {...register("date")}
+                      renderInput={(params) => (
+                        <TextField {...params} label="Date" />
+                      )}
+                      {...field}
                     />
-                    <FormHelperText>
-                      {errors.category ? "Category is required" : ""}
-                    </FormHelperText>
-                  </FormControl>
+                  </LocalizationProvider>
                 )}
-              </Grid>
+              />
             </Grid>
           </Grid>
 
-          <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
-            Select Account
-          </Typography>
-          <FormControl error={Boolean(errors.account)} sx={{ mb: 2 }}>
+          {cF === INCOME ? (
+            <TextField
+              label="Catergory"
+              disabled
+              sx={{ mb: 2 }}
+              id="incomeCategory"
+              fullWidth
+              {...register("category", { required: true })}
+              value={INCOME}
+            />
+          ) : (
+            <FormControl
+              error={Boolean(errors.category)}
+              sx={{ width: "100%", textAlign: "start", mb: 2 }}
+            >
+              <InputLabel id="category">Category</InputLabel>
+              <Controller
+                render={({ field }) => (
+                  <Select
+                    label="category"
+                    labelId="category"
+                    {...field}
+                    {...register("category", { required: true })}
+                    MenuProps={MenuProps}
+                  >
+                    <MenuItem value="">None</MenuItem>
+                    {Object.keys(Categories).map(
+                      (item, index) =>
+                        item !== INCOME && (
+                          <MenuItem key={index} value={item}>
+                            {item}
+                          </MenuItem>
+                        )
+                    )}
+                  </Select>
+                )}
+                control={control}
+                name="category"
+                defaultValue=""
+              />
+              <FormHelperText>
+                {errors.category ? "Category is required" : ""}
+              </FormHelperText>
+            </FormControl>
+          )}
+
+          <FormControl
+            error={Boolean(errors.account)}
+            sx={{ width: "100%", textAlign: "start", mb: 2 }}
+          >
+            <InputLabel id="account">Account</InputLabel>
             <Controller
               render={({ field }) => (
                 <Select
+                  label="account"
+                  labelId="account"
                   {...field}
-                  displayEmpty
                   {...register("account", { required: true })}
+                  defaultValue=""
+                  MenuProps={MenuProps}
                 >
                   <MenuItem value="">None</MenuItem>
                   {user.accounts.map((item, index) => (
@@ -213,38 +230,16 @@ export default function FormDialog({
               )}
               control={control}
               name="account"
-              defaultValue=""
             />
             <FormHelperText>
               {errors.account ? "Account is required" : ""}
             </FormHelperText>
           </FormControl>
 
-          <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
-            Select date
-          </Typography>
-          <Controller
-            name="date"
-            control={control}
-            render={({ field }) => (
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <MobileDatePicker
-                  inputFormat="DD/MM/YYYY"
-                  {...register("date")}
-                  renderInput={(params) => (
-                    <TextField {...params} sx={{ mb: 2 }} />
-                  )}
-                  {...field}
-                />
-              </LocalizationProvider>
-            )}
-          />
-          <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
-            Amount
-          </Typography>
           <TextField
+            label="Amount"
             id="amount"
-            sx={{ mb: 1 }}
+            sx={{ mb: 2 }}
             type="number"
             inputProps={{ min: 0 }}
             fullWidth
@@ -258,15 +253,9 @@ export default function FormDialog({
             error={Boolean(errors.amount)}
             helperText={errors.amount ? errors.amount.message : ""}
           />
-
-          <DialogActions sx={{ pt: 2 }}>
-            <Button variant="contained" type="submit" sx={{ px: 4 }}>
-              Add
-            </Button>
-            <Button variant="contained" color="error" onClick={handleClose}>
-              Cancel
-            </Button>
-          </DialogActions>
+          <Button variant="contained" fullWidth sx={{ my: 1 }} type="submit">
+            Register
+          </Button>
         </Box>
       </DialogContent>
     </Dialog>
