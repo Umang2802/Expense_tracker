@@ -121,6 +121,7 @@ const TransactionsTable = ({
                               onClick={() => {
                                 setTransaction(transaction);
                                 setModalName("edit");
+                                setTransactionId(transaction._id);
                                 setOpenTransactionModal(true);
                               }}
                             >
@@ -161,6 +162,7 @@ const TransactionsTable = ({
         setOpenTransactionModal={setOpenTransactionModal}
         modalName={modalName}
         transaction={transaction}
+        id={transactionId}
       />
       <DeleteModal
         open={open}

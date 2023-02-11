@@ -45,6 +45,7 @@ export default function TransactionModal({
   setOpenTransactionModal,
   modalName,
   transaction,
+  id,
 }) {
   const {
     register,
@@ -59,7 +60,7 @@ export default function TransactionModal({
     modalData = {
       title: "Edit transaction",
       method: "PUT",
-      url: UPDATE_TRANSACTION_URL,
+      url: UPDATE_TRANSACTION_URL + id,
       button: "Update transaction",
     };
   } else {

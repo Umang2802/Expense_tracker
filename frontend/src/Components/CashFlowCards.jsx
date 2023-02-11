@@ -1,7 +1,7 @@
 import { Grid } from "@mui/material";
 import React from "react";
 import { useSelector } from "react-redux";
-import { BALANCE, EXPENSE, INCOME, TRANSACTION } from "../data/constants";
+import { BALANCE, EXPENSE, INCOME } from "../data/constants";
 import BasicCard from "./Card";
 
 const CashFlowCards = () => {
@@ -25,7 +25,7 @@ const CashFlowCards = () => {
       <Grid item xs={3}>
         <BasicCard
           value={state.user.transactions.length}
-          tag={TRANSACTION}
+          tag="Transactions"
           color="grey"
         />
       </Grid>
