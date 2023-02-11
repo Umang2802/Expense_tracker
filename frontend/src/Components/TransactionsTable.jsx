@@ -1,5 +1,4 @@
 import { Button, Divider, Paper, Typography } from "@mui/material";
-import { Box } from "@mui/system";
 import * as React from "react";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
