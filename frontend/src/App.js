@@ -7,7 +7,7 @@ import { Box, CssBaseline, ThemeProvider } from "@mui/material";
 import Sidebar from "./Components/Sidebar";
 import Login from "./Pages/Login";
 import Container from "./Components/Container";
-import Signup from "./Pages/Signup";
+import Signup from "./Pages/SignUp";
 import theme from "./Typography";
 import CustomizedSnackbars from "./Components/Snackbar";
 import Loader from "./Components/Loader";

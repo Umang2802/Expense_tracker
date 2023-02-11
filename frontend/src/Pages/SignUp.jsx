@@ -211,10 +211,6 @@ export default function Signup() {
     });
   };
 
-  // const handleReset = () => {
-  //   setActiveStep(0);
-  // };
-
   //User
   const onSubmit = async (data) => {
     try {
