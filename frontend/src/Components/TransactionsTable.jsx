@@ -13,6 +13,8 @@ import { useSelector } from "react-redux";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DeleteTransactionModal from "./DeleteTransactionModal";
+import TransactionModal from "./Transaction/TransactionModal";
+import { useState } from "react";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -44,10 +46,17 @@ function formatDate(dateString) {
   return `${day}-${month}-${year}`;
 }
 
-const TransactionsTable = ({ noOfTransactions, title }) => {
+const TransactionsTable = ({
+  noOfTransactions,
+  title,
+  openTransactionModal,
+  setOpenTransactionModal,
+}) => {
   const transactions = useSelector((state) => state.user.transactions);
-  const [open, setOpen] = React.useState(false);
-  const [transactionId, setTransactionId] = React.useState();
+  const [open, setOpen] = useState(false);
+  const [transactionId, setTransactionId] = useState();
+  const [transaction, setTransaction] = useState({});
+  const [modalName, setModalName] = useState("");
 
   return (
     <Paper elevation={2} sx={{ mt: 2 }}>
@@ -104,9 +113,11 @@ const TransactionsTable = ({ noOfTransactions, title }) => {
                           )}
                           <StyledTableCell align="right">
                             <Button
-                              sx={{ minWidth: 0, p: 0 }}
+                              sx={{ minWidth: 0 }}
                               onClick={() => {
-                                // handleEdit(transaction._id);
+                                setTransaction(transaction);
+                                setModalName("edit");
+                                setOpenTransactionModal(true);
                               }}
                             >
                               <EditIcon />
@@ -140,6 +151,12 @@ const TransactionsTable = ({ noOfTransactions, title }) => {
           </Table>
         </TableContainer>
       </Box>
+      <TransactionModal
+        openTransactionModal={openTransactionModal}
+        setOpenTransactionModal={setOpenTransactionModal}
+        modalName={modalName}
+        transaction={transaction}
+      />
       <DeleteTransactionModal
         open={open}
         setOpen={setOpen}

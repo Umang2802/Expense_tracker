@@ -12,9 +12,10 @@ import {
 import { Controller, useForm } from "react-hook-form";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { UPDATE_USER_URL } from "../services/endpoints";
+import { GET_HOME_DATA_URL, UPDATE_USER_URL } from "../services/endpoints";
 import { apiCall } from "../redux/createAsyncThunk";
 import { home } from "../redux/slices/userSlice";
+import { useNavigate } from "react-router-dom";
 
 const fileToDataUri = (file) =>
   new Promise((resolve, reject) => {
@@ -39,6 +40,7 @@ const EditProfile = () => {
   } = useForm();
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const onSubmit = async (data) => {
     try {
@@ -77,6 +79,34 @@ const EditProfile = () => {
     setValue("username", tempUser.username);
     setImage(tempUser.profileImage ? tempUser.profileImage.imageUrl : "");
   }, [setValue, user.user, setImage]);
+
+  useEffect(() => {
+    const fetchHomedata = async () => {
+      try {
+        const signUp = await dispatch(
+          apiCall({
+            url: GET_HOME_DATA_URL,
+            method: "GET",
+            name: home,
+            token: user.token,
+          })
+        );
+        console.log(signUp);
+
+        if (signUp.meta.requestStatus === "fulfilled") {
+          console.log("Home Dispatch was successful");
+        } else if (signUp.meta.requestStatus === "rejected") {
+          console.log("Home Dispatch failed");
+          navigate("/login");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    if (user.token) {
+      fetchHomedata();
+    }
+  }, [user.token, dispatch, navigate]);
 
   return (
     <Paper

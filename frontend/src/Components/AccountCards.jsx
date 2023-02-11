@@ -2,6 +2,7 @@ import { Grid, Typography } from "@mui/material";
 import BasicCard from "./Card";
 import AddIcon from "@mui/icons-material/Add";
 import { useSelector } from "react-redux";
+import colors from "../data/colors";
 
 const AccountCards = ({ setOpen }) => {
   const accounts = useSelector((state) => state.user.accounts);
@@ -20,21 +21,21 @@ const AccountCards = ({ setOpen }) => {
               <BasicCard
                 value={item.amount}
                 tag={item.name}
-                color={item.color}
+                color={colors[index]}
               />
             </Grid>
           );
         })}
-        {/* {accounts.length < 4 && ( */}
-        <Grid item xs={3}>
-          <BasicCard
-            value={<AddIcon />}
-            tag="Add Account"
-            color="grey"
-            onClick={() => setOpen(true)}
-          />
-        </Grid>
-        {/* )} */}
+        {accounts.length < 4 && (
+          <Grid item xs={3}>
+            <BasicCard
+              value={<AddIcon />}
+              tag="Add Account"
+              color="grey"
+              onClick={() => setOpen(true)}
+            />
+          </Grid>
+        )}
       </Grid>
     </>
   );

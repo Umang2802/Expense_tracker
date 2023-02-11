@@ -1,21 +1,52 @@
 import React, { useState, useEffect } from "react";
-import BasicCard from "../Components/Card";
-import { Grid, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import TotalExpense from "../Components/TotalExpense";
 import Modal from "../Components/AddAccountModal";
-import NewTransactionModal from "../Components/NewTransactionModal";
 import RecentTransactions from "../Components/RecentTransactions";
 import AccountCards from "../Components/AccountCards";
 import AddButton from "../Components/AddButton";
-import { useSelector } from "react-redux";
-import { BALANCE, EXPENSE, INCOME, TRANSACTION } from "../data/constants";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import CashFlowCards from "../Components/CashFlowCards";
+import { apiCall } from "../redux/createAsyncThunk";
+import { home } from "../redux/slices/userSlice";
+import { GET_HOME_DATA_URL } from "../services/endpoints";
+import TransactionModal from "../Components/Transaction/TransactionModal";
 
-const Home = () => {
+const Home = ({ openTransactionModal, setOpenTransactionModal }) => {
   const [open, setOpen] = useState(false);
-  const [openTransactionModal, setOpenTransactionModal] = useState(false);
   const navigate = useNavigate();
   const state = useSelector((state) => state);
+  const token = useSelector((state) => state.user.token);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchHomedata = async () => {
+      try {
+        const signUp = await dispatch(
+          apiCall({
+            url: GET_HOME_DATA_URL,
+            method: "GET",
+            name: home,
+            token: token,
+          })
+        );
+        console.log(signUp);
+
+        if (signUp.meta.requestStatus === "fulfilled") {
+          console.log("Home Dispatch was successful");
+        } else if (signUp.meta.requestStatus === "rejected") {
+          console.log("Home Dispatch failed");
+          navigate("/login");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    if (token) {
+      fetchHomedata();
+    }
+  }, [token, dispatch, navigate]);
 
   useEffect(() => {
     if (state.response.responseStates === "error") {
@@ -28,44 +59,16 @@ const Home = () => {
       <Typography align="left" sx={{ mb: 3 }} color="grey">
         Dashboard
       </Typography>
-      <Grid container spacing={2} justifyContent="left" sx={{ mb: 2 }}>
-        <Grid item xs={3}>
-          <BasicCard
-            value={state.user.user.inflow}
-            tag={INCOME}
-            color="green"
-          />
-        </Grid>
-        <Grid item xs={3}>
-          <BasicCard
-            value={state.user.user.outflow}
-            tag={EXPENSE}
-            color="red"
-          />
-        </Grid>
-        <Grid item xs={3}>
-          <BasicCard
-            value={state.user.user.inflow - state.user.user.outflow}
-            tag={BALANCE}
-            color="blue"
-          />
-        </Grid>
-        <Grid item xs={3}>
-          <BasicCard
-            value={state.user.transactions.length}
-            tag={TRANSACTION}
-            color="grey"
-          />
-        </Grid>
-      </Grid>
+      <CashFlowCards />
       <AccountCards setOpen={setOpen} />
       <TotalExpense />
       <RecentTransactions />
       <AddButton setOpenTransactionModal={setOpenTransactionModal} />
       <Modal open={open} setOpen={setOpen} />
-      <NewTransactionModal
+      <TransactionModal
         openTransactionModal={openTransactionModal}
         setOpenTransactionModal={setOpenTransactionModal}
+        modalName="add"
       />
     </>
   );

@@ -14,16 +14,20 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import { INCOME, EXPENSE } from "../data/constants";
-import Categories from "../data/Categories";
+import { INCOME, EXPENSE } from "../../data/constants";
+import Categories from "../../data/Categories";
 import { Controller, useForm } from "react-hook-form";
-import { apiCall } from "../redux/createAsyncThunk";
-import { home } from "../redux/slices/userSlice";
+import { apiCall } from "../../redux/createAsyncThunk";
+import { home } from "../../redux/slices/userSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { ADD_TRANSACTION_URL } from "../services/endpoints";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useEffect } from "react";
+import {
+  ADD_TRANSACTION_URL,
+  UPDATE_TRANSACTION_URL,
+} from "../../services/endpoints";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -36,16 +40,37 @@ const MenuProps = {
   },
 };
 
-export default function FormDialog({
+export default function TransactionModal({
   openTransactionModal,
   setOpenTransactionModal,
+  modalName,
+  transaction,
 }) {
   const {
     register,
     handleSubmit,
     formState: { errors },
     control,
+    reset,
+    setValue,
   } = useForm();
+
+  let modalData = {};
+  if (modalName === "edit") {
+    modalData = {
+      title: "Edit transaction",
+      method: "PUT",
+      url: UPDATE_TRANSACTION_URL,
+      button: "Update transaction",
+    };
+  } else {
+    modalData = {
+      title: "Add transaction details",
+      method: "POST",
+      url: ADD_TRANSACTION_URL,
+      button: "Add",
+    };
+  }
 
   const [cF, setCF] = useState("");
 
@@ -54,12 +79,17 @@ export default function FormDialog({
 
   const onSubmit = async (data) => {
     console.log(data);
+    if (cF === INCOME) {
+      delete data.category;
+      data.category = INCOME;
+    }
     try {
+      console.log(data);
       const res = await dispatch(
         apiCall({
           payload: data,
-          url: ADD_TRANSACTION_URL,
-          method: "POST",
+          url: modalData.url,
+          method: modalData.method,
           name: home,
           token: user.token,
         })
@@ -67,10 +97,10 @@ export default function FormDialog({
 
       console.log(res);
       if (res.meta.requestStatus === "fulfilled") {
-        console.log("AddTransaction was successful");
+        console.log(modalData.title + " was successful");
         setOpenTransactionModal(false);
       } else if (res.meta.requestStatus === "rejected") {
-        console.log("Add Transaction Dispatch failed");
+        console.log(modalData.title + " Dispatch failed");
       }
     } catch (rejectedValueOrSerializedError) {
       console.log(rejectedValueOrSerializedError);
@@ -81,9 +111,25 @@ export default function FormDialog({
     setOpenTransactionModal(false);
   };
 
+  useEffect(() => {
+    if (modalName === "edit" && transaction) {
+      console.log(transaction);
+      const data = transaction;
+      let defaultValues = {};
+      defaultValues.description = data.description;
+      defaultValues.cashFlow = data.cashFlow;
+      setCF(data.cashFlow === INCOME ? INCOME : "");
+      defaultValues.category = data.cashFlow === INCOME ? "" : data.category;
+      defaultValues.date = data.date;
+      defaultValues.account = data.account._id;
+      defaultValues.amount = data.amount;
+      reset({ ...defaultValues });
+    }
+  }, [reset, transaction, modalName]);
+
   return (
     <Dialog open={openTransactionModal} onClose={handleClose} sx={{ p: 2 }}>
-      <DialogTitle>Enter Transaction Details</DialogTitle>
+      <DialogTitle>{modalData.title}</DialogTitle>
       <Divider />
       <DialogContent>
         <Box
@@ -166,7 +212,6 @@ export default function FormDialog({
               sx={{ mb: 2 }}
               id="incomeCategory"
               fullWidth
-              {...register("category", { required: true })}
               value={INCOME}
             />
           ) : (
@@ -254,7 +299,7 @@ export default function FormDialog({
             helperText={errors.amount ? errors.amount.message : ""}
           />
           <Button variant="contained" fullWidth sx={{ my: 1 }} type="submit">
-            Register
+            {modalData.button}
           </Button>
         </Box>
       </DialogContent>
