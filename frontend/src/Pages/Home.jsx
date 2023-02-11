@@ -45,6 +45,8 @@ const Home = ({ openTransactionModal, setOpenTransactionModal }) => {
     };
     if (token) {
       fetchHomedata();
+    } else {
+      navigate("/login");
     }
   }, [token, dispatch, navigate]);
 
