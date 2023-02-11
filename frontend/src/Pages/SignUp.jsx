@@ -246,24 +246,17 @@ export default function Signup() {
     }
   };
 
-  // const onAccountSubmit = async (data) => {
-  //   console.log(data);
-  //   setAccountdata(data);
-  //   handleNext();
-  // };
-
   const onAccountSubmit = async (data) => {
     console.log(data);
     try {
       if (image) {
         setUserdata({ ...userData, image: image });
       }
-
       console.log(userData);
 
       const signUp = await dispatch(
         apiCall({
-          payload: userData,
+          payload: { user: userData, account: data },
           url: SIGNUP_URL,
           method: "POST",
           name: user_register,
@@ -272,23 +265,8 @@ export default function Signup() {
       console.log(signUp);
 
       if (signUp.meta.requestStatus === "fulfilled") {
-        console.log("Dispatch was successful");
-        const accountRes = await dispatch(
-          apiCall({
-            payload: accountData,
-            url: ADD_ACCOUNT_URL,
-            method: "POST",
-            name: add_account,
-            token: signUp.payload.token,
-          })
-        );
-        console.log(accountRes);
-        if (accountRes.meta.requestStatus === "fulfilled") {
-          console.log("Dispatch was successful");
-          navigate("/");
-        } else if (accountRes.meta.requestStatus === "rejected") {
-          console.log("Account Dispatch failed");
-        }
+        console.log("Register Dispatch was successful");
+        navigate("/");
       } else if (signUp.meta.requestStatus === "rejected") {
         console.log("Register Dispatch failed");
       }
