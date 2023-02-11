@@ -12,8 +12,8 @@ import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { apiCall } from "../redux/createAsyncThunk";
-import { GET_HOME_DATA_URL, LOGIN_URL } from "../services/endpoints";
-import { home, login } from "../redux/slices/userSlice";
+import { LOGIN_URL } from "../services/endpoints";
+import { login } from "../redux/slices/userSlice";
 
 const Login = () => {
   const {
@@ -42,7 +42,7 @@ const Login = () => {
 
       if (loginRes.meta.requestStatus === "fulfilled") {
         console.log("Dispatch was successful");
-        // navigate("/");
+        navigate("/");
       } else if (loginRes.meta.requestStatus === "rejected") {
         console.log("Login Dispatch failed");
       }
@@ -51,20 +51,20 @@ const Login = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if (
-  //     state.user.user.loggedIn &&
-  //     state.response.message !== "Token is not vaild"
-  //   ) {
-  //     navigate("/");
-  //   }
-  //   if (
-  //     state.user.user.loggedIn &&
-  //     state.response.message !== "Authorization denied"
-  //   ) {
-  //     navigate("/");
-  //   }
-  // }, [state.user.user.loggedIn, state.response.message, navigate]);
+  useEffect(() => {
+    if (
+      state.user.user.loggedIn &&
+      state.response.message !== "Token is not vaild"
+    ) {
+      navigate("/");
+    }
+    if (
+      state.user.user.loggedIn &&
+      state.response.message !== "Authorization denied"
+    ) {
+      navigate("/");
+    }
+  }, [state.user.user.loggedIn, state.response.message, navigate]);
 
   return (
     <Container

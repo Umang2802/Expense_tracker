@@ -12,9 +12,9 @@ import {
 import { Controller, useForm } from "react-hook-form";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { GET_HOME_DATA_URL, UPDATE_USER_URL } from "../services/endpoints";
+import { UPDATE_USER_URL } from "../services/endpoints";
 import { apiCall } from "../redux/createAsyncThunk";
-import { home, user_update } from "../redux/slices/userSlice";
+import { home } from "../redux/slices/userSlice";
 
 const fileToDataUri = (file) =>
   new Promise((resolve, reject) => {
@@ -57,29 +57,15 @@ const EditProfile = () => {
           payload: data,
           url: UPDATE_USER_URL,
           method: "PUT",
-          name: user_update,
+          name: home,
           token: user.token,
         })
       );
 
       if (res.meta.requestStatus === "fulfilled") {
-        console.log("Dispatch was successful");
-        const homeRes = await dispatch(
-          apiCall({
-            url: GET_HOME_DATA_URL,
-            method: "GET",
-            name: home,
-            token: user.token,
-          })
-        );
-        console.log(homeRes);
-        if (homeRes.meta.requestStatus === "fulfilled") {
-          console.log("Dispatch was successful");
-        } else if (homeRes.meta.requestStatus === "rejected") {
-          console.log("Home Dispatch failed");
-        }
+        console.log("Edit Profile Dispatch was successful");
       } else if (res.meta.requestStatus === "rejected") {
-        console.log("Login Dispatch failed");
+        console.log("Edit Profile Dispatch failed");
       }
     } catch (error) {
       setError(error.message);

@@ -38,19 +38,9 @@ import {
   CHECK_USER_EMAIL_URL,
   SIGNUP_URL,
 } from "../services/endpoints";
-import {
-  add_account,
-  user_email,
-  user_register,
-} from "../redux/slices/userSlice";
-import { useEffect } from "react";
+import { user_email, user_register } from "../redux/slices/userSlice";
 
-const steps = [
-  "Add details",
-  "Profile image",
-  "Add an account",
-  // "Add Transaction",
-];
+const steps = ["Add details", "Profile image", "Add an account"];
 
 const fileToDataUri = (file) =>
   new Promise((resolve, reject) => {
@@ -60,13 +50,6 @@ const fileToDataUri = (file) =>
     };
     reader.readAsDataURL(file);
   });
-
-// const accounts = [
-//   {
-//     name: "HDFC",
-//     _id: 100,
-//   },
-// ];
 
 const QontoConnector = styled(StepConnector)(({ theme }) => ({
   [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -150,7 +133,6 @@ export default function Signup() {
   const [cF, setCF] = useState("");
   const {
     register,
-    resetField,
     handleSubmit,
     formState: { errors },
   } = useForm();
@@ -169,8 +151,6 @@ export default function Signup() {
   } = useForm();
 
   const [userData, setUserdata] = useState();
-  const [accountData, setAccountdata] = useState();
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -226,7 +206,6 @@ export default function Signup() {
           payload: data,
           url: CHECK_USER_EMAIL_URL,
           method: "POST",
-          name: user_email,
         })
       );
       console.log(emailCheckRes);

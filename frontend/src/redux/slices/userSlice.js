@@ -20,49 +20,28 @@ export const userSlice = createSlice({
   reducers: {
     home: (state, action) => {
       state.user = action.payload.user;
-      state.transactions = action.payload.transactions;
       state.accounts = action.payload.accounts;
-    },
-    user_info: (state, action) => {
-      state.user = action.payload.user;
+      state.transactions = action.payload.transactions;
     },
     user_register: (state, action) => {
-      console.log(action);
-      state = action.payload;
+      state.user = action.payload.user;
       state.user.loggedIn = true;
+      state.token = action.payload.token;
+      state.accounts = action.payload.accounts;
     },
     login: (state, action) => {
-      console.log(action);
-      state = action.payload;
+      state.user = action.payload.user;
       state.user.loggedIn = true;
+      state.token = action.payload.token;
+      state.accounts = action.payload.accounts;
+      state.transactions = action.payload.transactions;
     },
     logout: (state) => (state = initialState),
     user_email: (state) => {},
-    user_update: (state, action) => {
-      console.log(action);
-      state.user.loggedIn = true;
-    },
-    add_account: (state, action) => {
-      state.accounts = [...state.accounts, action.payload.account];
-    },
-    add_transaction: (state, action) => {
-      state.transactions = [...state.transactions, action.payload.transaction];
-    },
-    delete_transaction: (state) => {},
   },
 });
 
-export const {
-  home,
-  user_register,
-  login,
-  logout,
-  user_email,
-  user_info,
-  user_update,
-  add_account,
-  add_transaction,
-  delete_transaction,
-} = userSlice.actions;
+export const { home, user_register, login, logout, user_email } =
+  userSlice.actions;
 
 export default userSlice.reducer;

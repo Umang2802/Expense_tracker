@@ -5,13 +5,10 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Divider } from "@mui/material";
-import {
-  DELETE_TRANSACTION_URL,
-  GET_HOME_DATA_URL,
-} from "../services/endpoints";
+import { DELETE_TRANSACTION_URL } from "../services/endpoints";
 import { apiCall } from "../redux/createAsyncThunk";
 import { useDispatch, useSelector } from "react-redux";
-import { delete_transaction, home } from "../redux/slices/userSlice";
+import { home } from "../redux/slices/userSlice";
 
 export default function DeleteTransactionModal({
   transaction_id,
@@ -27,7 +24,7 @@ export default function DeleteTransactionModal({
         apiCall({
           url: DELETE_TRANSACTION_URL + transaction_id,
           method: "DELETE",
-          name: delete_transaction,
+          name: home,
           token: token,
         })
       );
@@ -35,25 +32,10 @@ export default function DeleteTransactionModal({
       console.log(res);
 
       if (res.meta.requestStatus === "fulfilled") {
-        console.log("Dispatch was successful");
-
-        const homeRes = await dispatch(
-          apiCall({
-            url: GET_HOME_DATA_URL,
-            method: "GET",
-            name: home,
-            token: token,
-          })
-        );
-        console.log(homeRes);
+        console.log("Delete Transaction Dispatch was successful");
         setOpen(false);
-        if (homeRes.meta.requestStatus === "fulfilled") {
-          console.log("Dispatch was successful");
-        } else if (homeRes.meta.requestStatus === "rejected") {
-          console.log("Home Dispatch failed");
-        }
       } else if (res.meta.requestStatus === "rejected") {
-        console.log("Login Dispatch failed");
+        console.log("Delete Transaction Dispatch failed");
       }
     } catch (rejectedValueOrSerializedError) {
       console.log(rejectedValueOrSerializedError);

@@ -8,8 +8,8 @@ import { Box, Divider, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { apiCall } from "../redux/createAsyncThunk";
-import { ADD_ACCOUNT_URL, GET_HOME_DATA_URL } from "../services/endpoints";
-import { add_account, home } from "../redux/slices/userSlice";
+import { ADD_ACCOUNT_URL } from "../services/endpoints";
+import { home } from "../redux/slices/userSlice";
 
 export default function FormDialog({ open, setOpen }) {
   const {
@@ -33,33 +33,17 @@ export default function FormDialog({ open, setOpen }) {
           payload: data,
           url: ADD_ACCOUNT_URL,
           method: "POST",
-          name: add_account,
+          name: home,
           token: token,
         })
       );
 
       console.log(res);
-
       if (res.meta.requestStatus === "fulfilled") {
-        console.log("Dispatch was successful");
-
-        const homeRes = await dispatch(
-          apiCall({
-            url: GET_HOME_DATA_URL,
-            method: "GET",
-            name: home,
-            token: token,
-          })
-        );
-        console.log(homeRes);
+        console.log("Add Account Dispatch was successful");
         setOpen(false);
-        if (homeRes.meta.requestStatus === "fulfilled") {
-          console.log("Dispatch was successful");
-        } else if (homeRes.meta.requestStatus === "rejected") {
-          console.log("Home Dispatch failed");
-        }
       } else if (res.meta.requestStatus === "rejected") {
-        console.log("Login Dispatch failed");
+        console.log("Add Account Dispatch failed");
       }
     } catch (rejectedValueOrSerializedError) {
       console.log(rejectedValueOrSerializedError);

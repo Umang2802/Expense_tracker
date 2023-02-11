@@ -19,9 +19,9 @@ import { INCOME, EXPENSE } from "../data/constants";
 import Categories from "../data/Categories";
 import { Controller, useForm } from "react-hook-form";
 import { apiCall } from "../redux/createAsyncThunk";
-import { add_transaction, home } from "../redux/slices/userSlice";
+import { home } from "../redux/slices/userSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { ADD_TRANSACTION_URL, GET_HOME_DATA_URL } from "../services/endpoints";
+import { ADD_TRANSACTION_URL } from "../services/endpoints";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -50,32 +50,17 @@ export default function FormDialog({
           payload: data,
           url: ADD_TRANSACTION_URL,
           method: "POST",
-          name: add_transaction,
+          name: home,
           token: user.token,
         })
       );
 
       console.log(res);
-
       if (res.meta.requestStatus === "fulfilled") {
-        console.log("Dispatch was successful");
-        const homeRes = await dispatch(
-          apiCall({
-            url: GET_HOME_DATA_URL,
-            method: "GET",
-            name: home,
-            token: user.token,
-          })
-        );
-        console.log(homeRes);
+        console.log("AddTransaction was successful");
         setOpenTransactionModal(false);
-        if (homeRes.meta.requestStatus === "fulfilled") {
-          console.log("Dispatch was successful");
-        } else if (homeRes.meta.requestStatus === "rejected") {
-          console.log("Home Dispatch failed");
-        }
       } else if (res.meta.requestStatus === "rejected") {
-        console.log("Login Dispatch failed");
+        console.log("Add Transaction Dispatch failed");
       }
     } catch (rejectedValueOrSerializedError) {
       console.log(rejectedValueOrSerializedError);

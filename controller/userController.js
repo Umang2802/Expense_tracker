@@ -149,7 +149,7 @@ const updateUser = async (req, res, next) => {
       const salt = await bcrypt.genSalt(10);
       req.body.password = await bcrypt.hash(password, salt);
     }
-    await User.findByIdAndUpdate(req.user._id, req.body);
+    await User.findByIdAndUpdate(user._id, req.body);
     req.message = "Profile updated successfully";
     req.userId = user._id;
     next();
