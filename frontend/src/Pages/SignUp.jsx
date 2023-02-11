@@ -24,7 +24,7 @@ import Check from "@mui/icons-material/Check";
 import PropTypes from "prop-types";
 import { apiCall } from "../redux/createAsyncThunk";
 import { CHECK_USER_EMAIL_URL, SIGNUP_URL } from "../services/endpoints";
-import { user_register } from "../redux/slices/userSlice";
+import { user_email, user_register } from "../redux/slices/userSlice";
 import { useForm } from "react-hook-form";
 
 const steps = ["Add details", "Profile image", "Add an account"];
@@ -185,6 +185,7 @@ export default function Signup() {
           payload: data,
           url: CHECK_USER_EMAIL_URL,
           method: "POST",
+          name: user_email,
         })
       );
       console.log(emailCheckRes);

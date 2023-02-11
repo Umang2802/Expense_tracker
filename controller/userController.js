@@ -124,6 +124,7 @@ const updateUser = async (req, res, next) => {
     delete req.body.inflow;
     delete req.body.outflow;
     const user = await User.findById(req.userId);
+    console.log(req.body);
 
     if (req.body.image) {
       if (
@@ -135,7 +136,6 @@ const updateUser = async (req, res, next) => {
         await cloudinary.uploader.upload(
           req.body.image,
           { folder: "Expense_tracker_users" },
-          // { upload_preset: "Expense_tracker_users" }
           (error, result) => {
             if (error) throw new Error();
             req.body.profileImage = {
@@ -147,7 +147,7 @@ const updateUser = async (req, res, next) => {
     }
     if (req.body.password) {
       const salt = await bcrypt.genSalt(10);
-      req.body.password = await bcrypt.hash(password, salt);
+      req.body.password = await bcrypt.hash(req.body.password, salt);
     }
     await User.findByIdAndUpdate(user._id, req.body);
     req.message = "Profile updated successfully";
