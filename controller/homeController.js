@@ -1,15 +1,16 @@
 const Account = require("../models/account");
 const Transaction = require("../models/transaction");
+const User = require("../models/user");
 
 const getHomeData = async (req, res) => {
   try {
-    const user = req.user;
+    const user = await User.findById(req.userId).select("-password -_id");
     const accounts = await Account.find({
-      user: user.id,
+      user: req.userId,
     }).select("-user");
 
     const transactions = await Transaction.find({
-      user: user.id,
+      user: req.userId,
     })
       .populate({ path: "account", select: "name" })
       .select("-user");

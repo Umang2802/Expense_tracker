@@ -42,21 +42,7 @@ const Login = () => {
 
       if (loginRes.meta.requestStatus === "fulfilled") {
         console.log("Dispatch was successful");
-        const homeRes = await dispatch(
-          apiCall({
-            url: GET_HOME_DATA_URL,
-            method: "GET",
-            name: home,
-            token: loginRes.payload.token,
-          })
-        );
-        console.log(homeRes);
-        if (homeRes.meta.requestStatus === "fulfilled") {
-          console.log("Dispatch was successful");
-          navigate("/");
-        } else if (homeRes.meta.requestStatus === "rejected") {
-          console.log("Home Dispatch failed");
-        }
+        // navigate("/");
       } else if (loginRes.meta.requestStatus === "rejected") {
         console.log("Login Dispatch failed");
       }
@@ -65,20 +51,20 @@ const Login = () => {
     }
   };
 
-  useEffect(() => {
-    if (
-      state.user.user.loggedIn &&
-      state.response.message !== "Token is not vaild"
-    ) {
-      navigate("/");
-    }
-    if (
-      state.user.user.loggedIn &&
-      state.response.message !== "Authorization denied"
-    ) {
-      navigate("/");
-    }
-  }, [state.user.user.loggedIn, state.response.message, navigate]);
+  // useEffect(() => {
+  //   if (
+  //     state.user.user.loggedIn &&
+  //     state.response.message !== "Token is not vaild"
+  //   ) {
+  //     navigate("/");
+  //   }
+  //   if (
+  //     state.user.user.loggedIn &&
+  //     state.response.message !== "Authorization denied"
+  //   ) {
+  //     navigate("/");
+  //   }
+  // }, [state.user.user.loggedIn, state.response.message, navigate]);
 
   return (
     <Container

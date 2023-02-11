@@ -10,16 +10,17 @@ const rootReducer = combineReducers({
   response: responseSlice,
 });
 
-const persistConfig = {
-  key: "root",
-  storage,
-  // blacklist: ["user"],
-};
+// const persistConfig = {
+//   key: "root",
+//   storage,
+//   // blacklist: ["user"],
+// };
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+// const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
-  reducer: persistedReducer,
+  // reducer: persistedReducer,
+  reducer: rootReducer,
 });
 
-export const persistor = persistStore(store);
+// export const persistor = persistStore(store);

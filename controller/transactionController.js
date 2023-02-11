@@ -25,7 +25,7 @@ const addTransaction = async (req, res, next) => {
     await session.withTransaction(async () => {
       const { account, cashFlow } = req.body;
       let { amount } = req.body;
-      let user = req.user;
+      let user = await User.findById(req.userId);
       amount = Number(amount);
 
       if (amount < 0) {
@@ -64,12 +64,10 @@ const addTransaction = async (req, res, next) => {
       await Account.findByIdAndUpdate(checkAccount._id, checkAccount).session(
         session
       );
-      const updatedUser = await User.findByIdAndUpdate(user._id, user)
-        .session(session)
-        .select("-password -_id");
+      await User.findByIdAndUpdate(user._id, user).session(session);
 
       req.message = "Added transaction successfully";
-      req.user = updatedUser;
+      req.userId = user._id;
     });
     session.endSession();
     next();
@@ -83,7 +81,7 @@ const updateTransaction = async (req, res, next) => {
   try {
     const session = await mongoose.startSession();
     await session.withTransaction(async () => {
-      let user = req.user;
+      let user = await User.findById(req.userId);
       const transaction_id = req.params.id;
       const { account } = req.body;
       let { amount } = req.body;
@@ -116,9 +114,7 @@ const updateTransaction = async (req, res, next) => {
         transaction_id,
         req.body,
         { new: true }
-      )
-        .session(session)
-        .select("-user -createdAt -updatedAt");
+      ).session(session);
 
       if (oldTransaction.cashFlow === "Income") {
         user.inflow -= oldTransaction.amount;
@@ -171,12 +167,10 @@ const updateTransaction = async (req, res, next) => {
         session
       );
 
-      const updatedUser = await User.findByIdAndUpdate(user._id, user)
-        .session(session)
-        .select("-password -_id");
+      await User.findByIdAndUpdate(user._id, user).session(session);
 
       req.message = "Updated transaction successfully";
-      req.user = updatedUser;
+      req.userId = user._id;
     });
     session.endSession();
     next();
@@ -190,7 +184,7 @@ const deleteTransaction = async (req, res, next) => {
   try {
     const session = await mongoose.startSession();
     await session.withTransaction(async () => {
-      let user = req.user;
+      let user = await User.findById(req.userId);
       const transaction_id = req.params.id;
       const checkTransaction = await Transaction.findOne({
         _id: transaction_id,
@@ -218,15 +212,14 @@ const deleteTransaction = async (req, res, next) => {
         checkAccount.amount += checkTransaction.amount;
       }
 
-      const updatedUser = await User.findByIdAndUpdate(user._id, user)
-        .session(session)
-        .select("-password -_id");
+      await User.findByIdAndUpdate(user._id, user).session(session);
+
       await Account.findByIdAndUpdate(checkAccount._id, checkAccount).session(
         session
       );
       await Transaction.findByIdAndDelete(transaction_id).session(session);
       req.message = "Successfully deleted transaction";
-      req.user = updatedUser;
+      req.userId = user._id;
     });
     session.endSession();
     next();

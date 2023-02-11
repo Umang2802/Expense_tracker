@@ -37,9 +37,8 @@ const login = async (req, res, next) => {
     }
 
     const token = await createJwtToken(user);
-    const newUser = await User.findById(user._id).select("-password -_id");
     req.token = token;
-    req.user = newUser;
+    req.userId = user._id;
     next();
   } catch (error) {
     console.error(error.message);
@@ -124,7 +123,7 @@ const updateUser = async (req, res, next) => {
     delete req.body.email;
     delete req.body.inflow;
     delete req.body.outflow;
-    const user = req.user;
+    const user = await User.findById(req.userId);
 
     if (req.body.image) {
       if (
@@ -150,11 +149,9 @@ const updateUser = async (req, res, next) => {
       const salt = await bcrypt.genSalt(10);
       req.body.password = await bcrypt.hash(password, salt);
     }
-    const updatedUser = await User.findByIdAndUpdate(req.user._id, req.body, {
-      new: true,
-    }).select("-password -_id");
+    await User.findByIdAndUpdate(req.user._id, req.body);
     req.message = "Profile updated successfully";
-    req.user = updatedUser;
+    req.userId = user._id;
     next();
   } catch (error) {
     console.error(error.message);
@@ -164,7 +161,8 @@ const updateUser = async (req, res, next) => {
 
 const info = async (req, res) => {
   try {
-    res.status(200).json({ user: req.user, message: "Success" });
+    const user = await User.findById(req.userId).select("-password -_id");
+    res.status(200).json({ user, message: "Success" });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Server Error" });

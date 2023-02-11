@@ -21,7 +21,7 @@ module.exports = (req, res, next) => {
         if (!user) {
           return res.status(401).json({ message: "Authorization denied" });
         }
-        req.user = user;
+        req.userId = user._id;
         next();
       }
     });

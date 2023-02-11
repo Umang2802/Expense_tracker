@@ -9,14 +9,14 @@ const axiosConfig = axios.create({
 
 export const apiCall = (params) =>
   createAsyncThunk(
-    `user/${params.name}`,
+    `${params.name}`,
     async (
       params,
       { dispatch, getState, rejectWithValue, fulfillWithValue }
     ) => {
       console.log(params);
       try {
-        dispatch(pending());
+        await dispatch(pending());
         const res = await axiosConfig({
           url: params.url,
           method: params.method,
@@ -26,8 +26,8 @@ export const apiCall = (params) =>
           data: params.payload,
         });
         console.log(res);
-        dispatch(params.name(res.data));
-        dispatch(success(res.data.message));
+        await dispatch(params.name(res.data));
+        await dispatch(success(res.data.message));
         return fulfillWithValue(res.data);
       } catch (err) {
         console.log(err.response.data.message);

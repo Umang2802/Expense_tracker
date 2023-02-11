@@ -20,7 +20,7 @@ const addAccount = async (req, res, next) => {
     const session = await mongoose.startSession();
     await session.withTransaction(async () => {
       let { name, amount } = req.body;
-      let user = req.user;
+      let user = await User.findById(req.userId);
       amount = Number(amount);
 
       if (amount < 0) {
@@ -42,12 +42,10 @@ const addAccount = async (req, res, next) => {
       await account.save({ session });
 
       user.inflow += amount;
-      const updatedUser = await User.findByIdAndUpdate(user._id, user)
-        .session(session)
-        .select("-password -_id");
+      await User.findByIdAndUpdate(user._id, user).session(session);
 
       req.message = "Added account successfully";
-      req.user = updatedUser;
+      req.userId = user._id;
     });
     session.endSession();
     next();
@@ -62,7 +60,7 @@ const updateAccount = async (req, res, next) => {
     const session = await mongoose.startSession();
     await session.withTransaction(async () => {
       let { amount } = req.body;
-      let user = req.user;
+      let user = await User.findById(req.userId);
       const account_id = req.params.id;
       amount = Number(amount);
 
@@ -84,13 +82,11 @@ const updateAccount = async (req, res, next) => {
       let newInflow = user.inflow;
       newInflow -= checkAccount.amount;
       newInflow += amount;
-      const updatedUser = await User.findByIdAndUpdate(user._id, {
+      await User.findByIdAndUpdate(user._id, {
         inflow: newInflow,
-      })
-        .session(session)
-        .select("-password -_id");
+      }).session(session);
       req.message = "Account updated successfully";
-      req.user = updatedUser;
+      req.userId = user._id;
     });
     session.endSession();
     next();
@@ -105,7 +101,7 @@ const deleteAccount = async (req, res, next) => {
     const session = await mongoose.startSession();
     await session.withTransaction(async () => {
       const account_id = req.params.id;
-      let user = req.user;
+      let user = await User.findById(req.userId);
 
       const checkAccount = await Account.findById(account_id).session(session);
       if (!checkAccount) {
@@ -128,13 +124,11 @@ const deleteAccount = async (req, res, next) => {
       });
       user.inflow -= Math.abs(checkAccount.amount - totalTransactionInflow);
 
-      await User.findByIdAndUpdate(user._id, user)
-        .session(session)
-        .select("-password -_id");
+      await User.findByIdAndUpdate(user._id, user).session(session);
       await Transaction.deleteMany({ account: account_id }).session(session);
       await Account.findByIdAndDelete(account_id).session(session);
       req.message = "Account deleted successfully";
-      req.user = updatedUser;
+      req.userId = user._id;
     });
     session.endSession();
     next();
