@@ -15,7 +15,7 @@ const getAllAccountsByUser = async (req, res) => {
   }
 };
 
-const addAccount = async (req, res) => {
+const addAccount = async (req, res, next) => {
   try {
     const session = await mongoose.startSession();
     await session.withTransaction(async () => {
@@ -47,18 +47,17 @@ const addAccount = async (req, res) => {
         .session(session)
         .select("-user -_id");
 
-      res
-        .status(200)
-        .json({ account: newAccount, message: "Added account successfully" });
+      req.message = "Added account successfully";
     });
     session.endSession();
+    next();
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Server Error" });
   }
 };
 
-const updateAccount = async (req, res) => {
+const updateAccount = async (req, res, next) => {
   try {
     const session = await mongoose.startSession();
     await session.withTransaction(async () => {
@@ -92,18 +91,17 @@ const updateAccount = async (req, res) => {
       await User.findByIdAndUpdate(user._id, { inflow: newInflow }).session(
         session
       );
-      res
-        .status(200)
-        .json({ account: result, message: "Account updated successfully" });
+      req.message = "Account updated successfully";
     });
     session.endSession();
+    next();
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Server Error" });
   }
 };
 
-const deleteAccount = async (req, res) => {
+const deleteAccount = async (req, res, next) => {
   try {
     const session = await mongoose.startSession();
     await session.withTransaction(async () => {
@@ -134,9 +132,10 @@ const deleteAccount = async (req, res) => {
       await User.findByIdAndUpdate(user._id, user).session(session);
       await Transaction.deleteMany({ account: account_id }).session(session);
       await Account.findByIdAndDelete(account_id).session(session);
-      res.status(200).send({ message: "Account deleted successfully" });
+      req.message = "Account deleted successfully";
     });
     session.endSession();
+    next();
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Server Error" });

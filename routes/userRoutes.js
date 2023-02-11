@@ -1,3 +1,4 @@
+const { getHomeData } = require("../controller/homeController");
 const {
   login,
   register,
@@ -11,8 +12,8 @@ const router = require("express").Router();
 
 router.get("/", middleware, info);
 router.post("/email", check_user_email);
-router.post("/login", login);
+router.post("/login", login, getHomeData);
 router.post("/register", register);
-router.put("/update", middleware, updateUser);
+router.put("/update", middleware, updateUser, getHomeData);
 
 module.exports = router;

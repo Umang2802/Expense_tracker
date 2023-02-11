@@ -19,7 +19,7 @@ const getAllTransactionsByUser = async (req, res) => {
   }
 };
 
-const addTransaction = async (req, res) => {
+const addTransaction = async (req, res, next) => {
   try {
     const session = await mongoose.startSession();
     await session.withTransaction(async () => {
@@ -73,19 +73,17 @@ const addTransaction = async (req, res) => {
         .select("name")
         .session(session);
 
-      res.status(200).json({
-        transaction: newTransaction,
-        message: "Added transaction successfully",
-      });
+      req.message = "Added transaction successfully";
     });
     session.endSession();
+    next();
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Server Error" });
   }
 };
 
-const updateTransaction = async (req, res) => {
+const updateTransaction = async (req, res, next) => {
   try {
     const session = await mongoose.startSession();
     await session.withTransaction(async () => {
@@ -179,19 +177,17 @@ const updateTransaction = async (req, res) => {
 
       await User.findByIdAndUpdate(user._id, user).session(session);
 
-      res.status(200).json({
-        transaction: newTransaction,
-        message: "Updated transaction successfully",
-      });
+      req.message = "Updated transaction successfully";
     });
     session.endSession();
+    next();
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Server Error" });
   }
 };
 
-const deleteTransaction = async (req, res) => {
+const deleteTransaction = async (req, res, next) => {
   try {
     const session = await mongoose.startSession();
     await session.withTransaction(async () => {
@@ -228,9 +224,10 @@ const deleteTransaction = async (req, res) => {
         session
       );
       await Transaction.findByIdAndDelete(transaction_id).session(session);
-      res.status(200).send({ message: "Successfully deleted transaction" });
+      req.message = "Successfully deleted transaction";
     });
     session.endSession();
+    next();
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Server Error" });

@@ -1,4 +1,5 @@
 const express = require("express");
+const { getHomeData } = require("../controller/homeController");
 const {
   getAllTransactionsByUser,
   updateTransaction,
@@ -12,12 +13,12 @@ const router = express.Router();
 router.get("/", middleware, getAllTransactionsByUser);
 
 //add a transaction
-router.post("/add", middleware, addTransaction);
+router.post("/add", middleware, addTransaction, getHomeData);
 
 //update a transaction
-router.put("/update/:id", middleware, updateTransaction);
+router.put("/update/:id", middleware, updateTransaction, getHomeData);
 
 //delete a transaction
-router.delete("/delete/:id", middleware, deleteTransaction);
+router.delete("/delete/:id", middleware, deleteTransaction, getHomeData);
 
 module.exports = router;

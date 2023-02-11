@@ -46,9 +46,9 @@ import {
 
 const steps = [
   "Add details",
-  "Profile Image",
-  "Add Account",
-  "Add Transaction",
+  "Profile image",
+  "Add an account",
+  // "Add Transaction",
 ];
 
 const fileToDataUri = (file) =>
@@ -60,12 +60,12 @@ const fileToDataUri = (file) =>
     reader.readAsDataURL(file);
   });
 
-const accounts = [
-  {
-    name: "HDFC",
-    _id: 100,
-  },
-];
+// const accounts = [
+//   {
+//     name: "HDFC",
+//     _id: 100,
+//   },
+// ];
 
 const QontoConnector = styled(StepConnector)(({ theme }) => ({
   [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -209,6 +209,7 @@ export default function Signup() {
       newSkipped.add(activeStep);
       return newSkipped;
     });
+    setImage("");
   };
 
   //User
@@ -236,7 +237,6 @@ export default function Signup() {
         handleNext();
       } else if (emailCheckRes.meta.requestStatus === "rejected") {
         console.log("Check Email Dispatch failed");
-        resetField({ ...data });
       }
     } catch (error) {
       console.log(error);
@@ -246,18 +246,20 @@ export default function Signup() {
     }
   };
 
-  const onAccountSubmit = async (data) => {
-    console.log(data);
-    setAccountdata(data);
-    handleNext();
-  };
+  // const onAccountSubmit = async (data) => {
+  //   console.log(data);
+  //   setAccountdata(data);
+  //   handleNext();
+  // };
 
-  const onTransactionSubmit = async (data) => {
+  const onAccountSubmit = async (data) => {
     console.log(data);
     try {
       if (image) {
         setUserdata({ ...userData, image: image });
       }
+
+      console.log(userData);
 
       const signUp = await dispatch(
         apiCall({
@@ -275,7 +277,7 @@ export default function Signup() {
           apiCall({
             payload: accountData,
             url: ADD_ACCOUNT_URL,
-            method: "GET",
+            method: "POST",
             name: add_account,
             token: signUp.payload.token,
           })
@@ -493,7 +495,7 @@ export default function Signup() {
                     src={
                       image
                         ? image
-                        : "https://tse1.mm.bing.net/th/id/OIP.1VIzl4Px0aT3Zveh0J_Y3gHaHx?pid=ImgDet&w=500&h=525&rs=1"
+                        : "https://st4.depositphotos.com/1156795/20814/v/450/depositphotos_208142524-stock-illustration-profile-placeholder-image-gray-silhouette.jpg"
                     }
                     sx={{ width: 200, height: 200, my: 3 }}
                   />
@@ -511,7 +513,7 @@ export default function Signup() {
                       }}
                     />
                     <Button variant="contained" component="span">
-                      Choose profile image
+                      {image ? "Change profile image" : "Choose profile image"}
                     </Button>
                   </label>
                   <Grid
@@ -566,7 +568,7 @@ export default function Signup() {
                   Account details
                 </Typography>
                 <TextField
-                  label="Account Name"
+                  label="Account Name (Ex: Cash)"
                   autoFocus
                   id="accountName"
                   fullWidth
@@ -623,14 +625,14 @@ export default function Signup() {
                       sx={{ mt: 2, mb: 1 }}
                       type="submit"
                     >
-                      Proceed
+                      Register
                     </Button>
                   </Grid>
                 </Grid>
               </Box>
             )}
 
-            {activeStep === 3 && (
+            {/* {activeStep === 3 && (
               <Box
                 component="form"
                 sx={{ p: 3 }}
@@ -832,7 +834,7 @@ export default function Signup() {
                   </Grid>
                 </Grid>
               </Box>
-            )}
+            )} */}
           </>
         </Box>
       </Paper>
