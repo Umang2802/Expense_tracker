@@ -51,9 +51,11 @@ const TotalExpense = () => {
         <b>Total Expenses</b>
         <Calender setDate={setDate} />
       </Typography>
-      {transactions.length === 0 ? (
+      {totalAmount === 0 ? (
         <Typography align="center" variant="h6" sx={{ p: 5 }}>
-          No transaction data
+          {transactions.length === 0
+            ? "No transactions"
+            : "No transactions for selected dates"}
         </Typography>
       ) : (
         <Grid container justifyContent="space-evenly">
