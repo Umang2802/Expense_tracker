@@ -91,6 +91,12 @@ const EditProfile = () => {
   }, [state.response.message, navigate]);
 
   useEffect(() => {
+    if (!state.user.user.username) {
+      navigate("/login");
+    }
+  }, [state.user.user.username, navigate]);
+
+  useEffect(() => {
     const fetchHomedata = async () => {
       try {
         const signUp = await dispatch(

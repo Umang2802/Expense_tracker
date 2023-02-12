@@ -50,6 +50,12 @@ const Transactions = ({ openTransactionModal, setOpenTransactionModal }) => {
     }
   }, [state.response.message, navigate]);
 
+  useEffect(() => {
+    if (!state.user.user.username) {
+      navigate("/login");
+    }
+  }, [state.user.user.username, navigate]);
+
   return (
     <TransactionsTable
       noOfTransactions={transactions.length}

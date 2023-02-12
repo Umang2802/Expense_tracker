@@ -58,6 +58,12 @@ const Home = ({ openTransactionModal, setOpenTransactionModal }) => {
     }
   }, [state.response.message, navigate]);
 
+  useEffect(() => {
+    if (!state.user.user.username) {
+      navigate("/login");
+    }
+  }, [state.user.user.username, navigate]);
+
   return (
     <>
       <Typography align="left" sx={{ mb: 3 }} color="grey">

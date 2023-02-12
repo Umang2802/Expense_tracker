@@ -9,11 +9,12 @@ import ListItemText from "@mui/material/ListItemText";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Avatar from "@mui/material/Avatar";
-import { Button } from "@mui/material";
+import { AppBar, Button, IconButton } from "@mui/material";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/slices/userSlice";
+import MenuIcon from "@mui/icons-material/Menu";
 
 const sidebarItems = [
   { name: "Dashboard", link: "/" },
@@ -31,27 +32,28 @@ function Sidebar({ drawerWidth }) {
 
   const user = useSelector((state) => state.user);
 
-  console.log("user", user);
-
   const drawer = (
     <div>
       <Toolbar>
-        <Typography variant="h6">Expense Tracker</Typography>
+        <Typography variant="h6" sx={{ display: { xs: "none", sm: "block" } }}>
+          Expense Tracker
+        </Typography>
       </Toolbar>
-      <Divider />
+      <Divider sx={{ display: { xs: "none", sm: "block" } }} />
       <Box sx={{ p: 4 }}>
         <Avatar
           alt="Remy Sharp"
           src={
             user.user.profileImage
               ? user.user.profileImage.imageUrl
-              : "/static/images/avatar/1.jpg"
+              : "https://tse1.mm.bing.net/th/id/OIP.1VIzl4Px0aT3Zveh0J_Y3gHaHx?pid=ImgDet&w=500&h=525&rs=1"
           }
           sx={{ width: 56, height: 56, margin: "auto", mb: 2 }}
         />
-        <Typography>{user.user.username}</Typography>
+        <Typography align="center">{user.user.username}</Typography>
         <Button
           sx={{
+            m: "auto",
             mt: 1,
             mb: 5,
             px: 2,
@@ -59,6 +61,7 @@ function Sidebar({ drawerWidth }) {
             background: "rgba(0,0,0,0.1)",
             color: "black",
             letterSpacing: "1px",
+            display: "flex",
           }}
         >
           <AccountBalanceWalletIcon fontSize="small" />
@@ -95,41 +98,70 @@ function Sidebar({ drawerWidth }) {
   );
 
   return (
-    <Box
-      component="nav"
-      sx={{
-        width: { sm: drawerWidth },
-        flexShrink: { sm: 0 },
-        boxSizing: "border-box",
-      }}
-      aria-label="mailbox folders"
-    >
-      {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-      <Drawer
-        //container={container}
-        variant="temporary"
-        open={mobileOpen}
-        onClose={handleDrawerToggle}
-        ModalProps={{
-          keepMounted: true, // Better open performance on mobile.
-        }}
+    <Box sx={{ display: "flex" }}>
+      <AppBar
+        color=""
+        position="fixed"
         sx={{
-          display: { xs: "block", sm: "none" },
-          "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
+          display: { sm: "none" },
         }}
       >
-        {drawer}
-      </Drawer>
-      <Drawer
-        variant="permanent"
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2 }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography noWrap align="center">
+            Expense Tracker
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Box
+        component="nav"
         sx={{
-          display: { xs: "none", sm: "block" },
-          "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
+          width: { sm: drawerWidth },
+          flexShrink: { sm: 0 },
+          boxSizing: "border-box",
         }}
-        open
+        aria-label="mailbox folders"
       >
-        {drawer}
-      </Drawer>
+        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
+          sx={{
+            display: { xs: "block", sm: "none" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth,
+            },
+          }}
+        >
+          {drawer}
+        </Drawer>
+        <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: "none", sm: "block" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth,
+            },
+          }}
+          open
+        >
+          {drawer}
+        </Drawer>
+      </Box>
     </Box>
   );
 }

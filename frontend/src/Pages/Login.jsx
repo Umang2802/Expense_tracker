@@ -66,6 +66,12 @@ const Login = () => {
     }
   }, [state.user.user.loggedIn, state.response.message, navigate]);
 
+  useEffect(() => {
+    if (state.user.user.username) {
+      navigate("/");
+    }
+  });
+
   return (
     <Container
       component="main"
