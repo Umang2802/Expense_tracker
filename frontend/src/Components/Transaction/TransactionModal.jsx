@@ -50,7 +50,7 @@ export default function TransactionModal({
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitSuccessful },
     control,
     reset,
   } = useForm();
@@ -126,6 +126,17 @@ export default function TransactionModal({
       reset({ ...defaultValues });
     }
   }, [reset, transaction, modalName]);
+
+  useEffect(() => {
+    reset({
+      description: "",
+      cashFlow: "",
+      category: "",
+      account: "",
+      amount: 0,
+      date: Date.now,
+    });
+  }, [reset, isSubmitSuccessful]);
 
   return (
     <Dialog open={openTransactionModal} onClose={handleClose} sx={{ p: 2 }}>

@@ -10,12 +10,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { apiCall } from "../redux/createAsyncThunk";
 import { ADD_ACCOUNT_URL } from "../services/endpoints";
 import { home } from "../redux/slices/userSlice";
+import { useEffect } from "react";
 
 export default function FormDialog({ open, setOpen }) {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    reset,
+    formState: { errors, isSubmitSuccessful },
   } = useForm();
 
   const dispatch = useDispatch();
@@ -49,6 +51,10 @@ export default function FormDialog({ open, setOpen }) {
       console.log(rejectedValueOrSerializedError);
     }
   };
+
+  useEffect(() => {
+    reset({ name: "", amount: 0 });
+  }, [reset, isSubmitSuccessful]);
 
   return (
     <Dialog open={open} onClose={handleClose}>
