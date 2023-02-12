@@ -14,7 +14,7 @@ module.exports = (req, res, next) => {
   try {
     jwt.verify(token, process.env.JWT_SECRET, async (error, payload) => {
       if (error) {
-        return res.status(401).json({ message: "Token is not valid" });
+        return res.status(401).json({ message: "Session expired" });
       } else {
         //send user in req
         const user = await User.findById(payload.user_id).select("-password");
