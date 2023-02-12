@@ -297,13 +297,13 @@ export default function TransactionModal({
             id="amount"
             sx={{ mb: 2 }}
             type="number"
-            inputProps={{ min: 0 }}
+            inputProps={{ min: 1 }}
             fullWidth
             {...register("amount", {
               required: "Amount is required",
               min: {
-                value: 0,
-                message: "Amount should be positive",
+                value: 1,
+                message: "Amount should be greater than 1",
               },
             })}
             error={Boolean(errors.amount)}

@@ -28,6 +28,7 @@ const fileToDataUri = (file) =>
 
 const EditProfile = () => {
   const user = useSelector((state) => state.user);
+  const state = useSelector((state) => state);
   const [error, setError] = useState("");
   const [image, setImage] = useState("");
   const [pass, setPass] = useState("");
@@ -81,6 +82,15 @@ const EditProfile = () => {
   }, [setValue, user.user, setImage]);
 
   useEffect(() => {
+    if (
+      state.response.message === "Authorization denied" ||
+      state.response.message === "Session expired"
+    ) {
+      navigate("/login");
+    }
+  }, [state.response.message, navigate]);
+
+  useEffect(() => {
     const fetchHomedata = async () => {
       try {
         const signUp = await dispatch(
@@ -94,10 +104,9 @@ const EditProfile = () => {
         console.log(signUp);
 
         if (signUp.meta.requestStatus === "fulfilled") {
-          console.log("Home Dispatch was successful");
+          console.log("Edit profile Dispatch was successful");
         } else if (signUp.meta.requestStatus === "rejected") {
-          console.log("Home Dispatch failed");
-          navigate("/login");
+          console.log("Edit profile Dispatch failed");
         }
       } catch (error) {
         console.log(error);
@@ -106,7 +115,7 @@ const EditProfile = () => {
     if (user.token) {
       fetchHomedata();
     }
-  }, [user.token, dispatch, navigate]);
+  }, [user.token, dispatch]);
 
   return (
     <Paper

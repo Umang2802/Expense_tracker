@@ -9,6 +9,7 @@ import { GET_HOME_DATA_URL } from "../services/endpoints";
 const Transactions = ({ openTransactionModal, setOpenTransactionModal }) => {
   const transactions = useSelector((state) => state.user.transactions);
   const token = useSelector((state) => state.user.token);
+  const state = useSelector((state) => state);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -27,10 +28,9 @@ const Transactions = ({ openTransactionModal, setOpenTransactionModal }) => {
         console.log(signUp);
 
         if (signUp.meta.requestStatus === "fulfilled") {
-          console.log("Home Dispatch was successful");
+          console.log("Transaction Dispatch was successful");
         } else if (signUp.meta.requestStatus === "rejected") {
-          console.log("Home Dispatch failed");
-          navigate("/login");
+          console.log("Transaction Dispatch failed");
         }
       } catch (error) {
         console.log(error);
@@ -40,6 +40,15 @@ const Transactions = ({ openTransactionModal, setOpenTransactionModal }) => {
       fetchHomedata();
     }
   }, [token, dispatch, navigate]);
+
+  useEffect(() => {
+    if (
+      state.response.message === "Authorization denied" ||
+      state.response.message === "Session expired"
+    ) {
+      navigate("/login");
+    }
+  }, [state.response.message, navigate]);
 
   return (
     <TransactionsTable

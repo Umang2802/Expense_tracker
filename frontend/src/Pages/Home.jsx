@@ -37,7 +37,6 @@ const Home = ({ openTransactionModal, setOpenTransactionModal }) => {
           console.log("Home Dispatch was successful");
         } else if (signUp.meta.requestStatus === "rejected") {
           console.log("Home Dispatch failed");
-          navigate("/login");
         }
       } catch (error) {
         console.log(error);
@@ -51,10 +50,13 @@ const Home = ({ openTransactionModal, setOpenTransactionModal }) => {
   }, [token, dispatch, navigate]);
 
   useEffect(() => {
-    if (state.response.responseStates === "error") {
+    if (
+      state.response.message === "Authorization denied" ||
+      state.response.message === "Session expired"
+    ) {
       navigate("/login");
     }
-  }, [state.response.responseStates, navigate]);
+  }, [state.response.message, navigate]);
 
   return (
     <>

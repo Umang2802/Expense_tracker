@@ -87,13 +87,13 @@ export default function FormDialog({ open, setOpen }) {
             id="amount"
             type="number"
             sx={{ mb: 1 }}
-            inputProps={{ min: 0 }}
+            inputProps={{ min: 1 }}
             fullWidth
             {...register("amount", {
               required: "Initial Amount is required",
               min: {
-                value: 0,
-                message: "Amount should be positive",
+                value: 1,
+                message: "Amount should be greater than 1",
               },
             })}
             error={Boolean(errors.amount)}
