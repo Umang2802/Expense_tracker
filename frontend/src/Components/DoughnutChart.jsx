@@ -20,7 +20,7 @@ const array = (Categories, categories, amount) => {
   return newArray;
 };
 
-const DoughnutChart = ({ date, categories, totalAmount }) => {
+const DoughnutChart = ({ categories, totalAmount }) => {
   console.log(categories);
   const [newCat, setnewCat] = useState([]);
 
@@ -37,7 +37,7 @@ const DoughnutChart = ({ date, categories, totalAmount }) => {
     animationEnabled: true,
     subtitles: [
       {
-        text: `$${totalAmount}`,
+        text: `₹${totalAmount}`,
         verticalAlign: "center",
         fontSize: 24,
         dockInsidePlotArea: true,

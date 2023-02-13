@@ -129,7 +129,7 @@ const EditProfile = () => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        p: 4,
+        py: 4,
         borderRadius: "5px",
         height: "100%",
       }}
@@ -147,7 +147,7 @@ const EditProfile = () => {
           Edit Profile
         </Typography>
         <Grid container justifyContent="space-between">
-          <Grid item xs={6}>
+          <Grid item xs={12} sm={6}>
             <Typography sx={{ float: "left", mb: 1 }} fontWeight={500}>
               User Name
             </Typography>
@@ -247,7 +247,8 @@ const EditProfile = () => {
           <Grid
             container
             item
-            xs={5}
+            xs={12}
+            sm={5}
             direction="column"
             justifyContent="center"
             alignItems="center"

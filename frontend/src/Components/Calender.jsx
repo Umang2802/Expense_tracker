@@ -49,9 +49,19 @@ export default function BasicDateRangePicker({ setDate }) {
           }}
           renderInput={(startProps, endProps) => (
             <React.Fragment>
-              <TextField {...startProps} size="small" sx={{ width: 150 }} />
+              <TextField
+                {...startProps}
+                size="small"
+                sx={{
+                  width: { xs: 110, sm: 150 },
+                }}
+              />
               <Box sx={{ mx: 1 }}> - </Box>
-              <TextField {...endProps} size="small" sx={{ width: 150 }} />
+              <TextField
+                {...endProps}
+                size="small"
+                sx={{ width: { xs: 110, sm: 150 } }}
+              />
             </React.Fragment>
           )}
         />

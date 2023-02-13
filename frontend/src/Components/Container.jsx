@@ -10,6 +10,7 @@ const Container = ({ children, drawerWidth }) => {
         flexGrow: 1,
         p: 3,
         m: 0,
+        pt: { xs: 10, sm: 3 },
         width: { xs: `calc(100% - ${drawerWidth}px)` },
         minHeight: "100vh",
       }}

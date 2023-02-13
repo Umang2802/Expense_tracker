@@ -1,7 +1,6 @@
 import * as React from "react";
 import Typography from "@mui/material/Typography";
 import { Paper } from "@mui/material";
-import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 
 export default function BasicCard({ value, tag, color }) {
   return (
@@ -13,39 +12,20 @@ export default function BasicCard({ value, tag, color }) {
         color={color}
         sx={{
           pt: 1,
-          fontSize: { xs: "1rem", sm: "1.5rem" },
+          fontSize: { xs: "1rem", sm: "1.3rem" },
           letterSpacing: { sm: "1px" },
         }}
       >
-        {tag === "Transactions" || tag === "Add Account" ? (
-          value
-        ) : value < 0 ? (
-          <>
-            -
-            <CurrencyRupeeIcon
-              sx={{
-                paddingTop: "4px",
-                fontSize: { xs: "x-small", sm: "x-large" },
-              }}
-            />
-            {Math.abs(value)}
-          </>
-        ) : (
-          <>
-            <CurrencyRupeeIcon
-              sx={{
-                paddingTop: "4px",
-                fontSize: { xs: "large", sm: "x-large" },
-              }}
-            />
-            {value}
-          </>
-        )}
+        {tag === "Transactions" || tag === "Add Account"
+          ? value
+          : value < 0
+          ? `-₹${Math.abs(value)}`
+          : `₹${value}`}
       </Typography>
       <Typography
         variant="caption"
         component="p"
-        sx={{ fontSize: { sm: "1.5rem" } }}
+        sx={{ fontSize: { sm: "0.8rem" } }}
       >
         {tag}
       </Typography>

@@ -32,7 +32,7 @@ const BasicTable = ({ date, categories, totalAmount }) => {
               {row}
             </TableCells>
             <TableCells align="right" sx={{ border: 0, boxShadow: "none" }}>
-              {categories[`${row}`]}
+              &#x20B9;{categories[`${row}`]}
             </TableCells>
             <TableCells align="right" sx={{ border: 0, boxShadow: "none" }}>
               {Math.ceil((categories[`${row}`] / totalAmount) * 100)}%

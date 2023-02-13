@@ -14,7 +14,7 @@ const AccountCards = ({ setOpen }) => {
 
   return (
     <>
-      <Typography align="left" sx={{ mb: 1 }}>
+      <Typography align="left" sx={{ mb: 1, mt: 3 }}>
         <b>Accounts</b>
         <span style={{ float: "right", fontSize: ".65rem" }}>
           * You can add atmost 4 accounts

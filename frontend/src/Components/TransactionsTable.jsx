@@ -108,11 +108,11 @@ const TransactionsTable = ({
                         <>
                           {transaction.cashFlow === INCOME ? (
                             <StyledTableCell sx={{ color: "green" }}>
-                              + ${transaction.amount}
+                              ₹{transaction.amount}
                             </StyledTableCell>
                           ) : (
                             <StyledTableCell sx={{ color: "red" }}>
-                              - ${transaction.amount}
+                              ₹{transaction.amount}
                             </StyledTableCell>
                           )}
                           <StyledTableCell align="right">
@@ -143,11 +143,11 @@ const TransactionsTable = ({
                         </>
                       ) : transaction.cashFlow === INCOME ? (
                         <StyledTableCell align="right" sx={{ color: "green" }}>
-                          + ${transaction.amount}
+                          ₹{transaction.amount}
                         </StyledTableCell>
                       ) : (
                         <StyledTableCell align="right" sx={{ color: "red" }}>
-                          - ${transaction.amount}
+                          ₹{transaction.amount}
                         </StyledTableCell>
                       )}
                     </StyledTableRow>

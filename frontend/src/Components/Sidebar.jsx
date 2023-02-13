@@ -65,7 +65,7 @@ function Sidebar({ drawerWidth }) {
           }}
         >
           <AccountBalanceWalletIcon fontSize="small" />
-          &nbsp;${user.user.inflow - user.user.outflow}
+          &nbsp;₹{user.user.inflow - user.user.outflow}
         </Button>
         <Divider />
         <List>
