@@ -9,7 +9,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Avatar from "@mui/material/Avatar";
-import { AppBar, Button, IconButton } from "@mui/material";
+import { AppBar, Button, Grid, IconButton } from "@mui/material";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -48,7 +48,7 @@ function Sidebar({ drawerWidth }) {
               ? user.user.profileImage.imageUrl
               : "https://tse1.mm.bing.net/th/id/OIP.1VIzl4Px0aT3Zveh0J_Y3gHaHx?pid=ImgDet&w=500&h=525&rs=1"
           }
-          sx={{ width: 56, height: 56, margin: "auto", mb: 2 }}
+          sx={{ width: 100, height: 100, margin: "auto", mb: 2 }}
         />
         <Typography align="center">{user.user.username}</Typography>
         <Button
@@ -71,7 +71,7 @@ function Sidebar({ drawerWidth }) {
         <List>
           {sidebarItems.map((item, index) => (
             <ListItem key={item.name} disablePadding>
-              <ListItemButton>
+              <ListItemButton onClick={() => setMobileOpen(false)}>
                 <Link
                   to={item.link}
                   style={{ textDecoration: "none", color: "black" }}
@@ -106,20 +106,22 @@ function Sidebar({ drawerWidth }) {
           display: { sm: "none" },
         }}
       >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography noWrap align="center">
-            Expense Tracker
-          </Typography>
-        </Toolbar>
+        <Grid container alignItems="center">
+          <Grid item xs={2}>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+            >
+              <MenuIcon />
+            </IconButton>
+          </Grid>
+          <Grid item xs>
+            <Typography variant="h6">Expense Tracker</Typography>
+          </Grid>
+          <Grid item xs={2}></Grid>
+        </Grid>
       </AppBar>
       <Box
         component="nav"

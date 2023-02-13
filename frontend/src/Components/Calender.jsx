@@ -26,7 +26,13 @@ export default function BasicDateRangePicker({ setDate }) {
   }, [value, setDate]);
 
   return (
-    <div style={{ paddingBottom: "20px", float: "right" }}>
+    <Box
+      sx={{
+        pt: { xs: "30px", sm: "10px" },
+        pb: { xs: "10px", sm: "10px" },
+        float: "right",
+      }}
+    >
       <LocalizationProvider
         dateAdapter={AdapterDayjs}
         localeText={{
@@ -53,19 +59,15 @@ export default function BasicDateRangePicker({ setDate }) {
                 {...startProps}
                 size="small"
                 sx={{
-                  width: { xs: 110, sm: 150 },
+                  width: 120,
                 }}
               />
               <Box sx={{ mx: 1 }}> - </Box>
-              <TextField
-                {...endProps}
-                size="small"
-                sx={{ width: { xs: 110, sm: 150 } }}
-              />
+              <TextField {...endProps} size="small" sx={{ width: 120 }} />
             </React.Fragment>
           )}
         />
       </LocalizationProvider>
-    </div>
+    </Box>
   );
 }
