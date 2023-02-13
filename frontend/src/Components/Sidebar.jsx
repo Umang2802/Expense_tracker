@@ -106,7 +106,7 @@ function Sidebar({ drawerWidth }) {
           display: { sm: "none" },
         }}
       >
-        <Grid container alignItems="center">
+        <Grid container alignItems="center" sx={{ p: 1 }}>
           <Grid item xs={2}>
             <IconButton
               color="inherit"
