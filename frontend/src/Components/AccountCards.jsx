@@ -23,7 +23,7 @@ const AccountCards = ({ setOpen }) => {
       <Grid container spacing={2} justifyContent="left" sx={{ mb: 2 }}>
         {accounts.map((item, index) => {
           return (
-            <Grid item xs={3} key={index}>
+            <Grid item sm={3} xs={6} key={index}>
               <Tooltip title="Click to delete account">
                 <Button
                   fullWidth
@@ -33,6 +33,7 @@ const AccountCards = ({ setOpen }) => {
                     setModalname("Delete Account");
                     setOpenDeleteModal(true);
                   }}
+                  sx={{ p: 0 }}
                 >
                   <BasicCard
                     value={item.amount}
@@ -45,9 +46,15 @@ const AccountCards = ({ setOpen }) => {
           );
         })}
         {accounts.length < 4 && (
-          <Grid item xs={3}>
-            <Button fullWidth onClick={() => setOpen(true)}>
-              <BasicCard value={<AddIcon />} tag="Add Account" color="grey" />
+          <Grid item sm={3} xs={6}>
+            <Button fullWidth onClick={() => setOpen(true)} sx={{ p: 0 }}>
+              <BasicCard
+                value={
+                  <AddIcon sx={{ fontSize: { xs: "large", sm: "x-large" } }} />
+                }
+                tag="Add Account"
+                color="grey"
+              />
             </Button>
           </Grid>
         )}

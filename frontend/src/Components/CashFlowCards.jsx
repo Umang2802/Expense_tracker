@@ -9,20 +9,20 @@ const CashFlowCards = () => {
 
   return (
     <Grid container spacing={2} justifyContent="left" sx={{ mb: 2 }}>
-      <Grid item xs={3}>
+      <Grid item xs={6} sm={3}>
         <BasicCard value={state.user.user.inflow} tag={INCOME} color="green" />
       </Grid>
-      <Grid item xs={3}>
+      <Grid item xs={6} sm={3}>
         <BasicCard value={state.user.user.outflow} tag={EXPENSE} color="red" />
       </Grid>
-      <Grid item xs={3}>
+      <Grid item xs={6} sm={3}>
         <BasicCard
           value={state.user.user.inflow - state.user.user.outflow}
           tag={BALANCE}
           color="blue"
         />
       </Grid>
-      <Grid item xs={3}>
+      <Grid item xs={6} sm={3}>
         <BasicCard
           value={state.user.transactions.length}
           tag="Transactions"

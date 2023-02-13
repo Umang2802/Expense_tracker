@@ -59,7 +59,7 @@ const TotalExpense = () => {
         </Typography>
       ) : (
         <Grid container justifyContent="space-evenly">
-          <Grid item xs={7}>
+          <Grid item xs={12} sm={7}>
             <DoughnutChart
               style={{ height: "300px", width: "100%" }}
               date={date}
@@ -67,7 +67,7 @@ const TotalExpense = () => {
               totalAmount={totalAmount}
             />
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={7}>
             <BasicTable
               date={date}
               categories={categories}
